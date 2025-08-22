@@ -65,50 +65,56 @@ function App() {
 
   return (
     <div className="App">
-      <Canvas
-  camera={{ position: [-5, 0, 5], fov: 60 }}
-  dpr={[1, 2]}
-  onClick={startMusicOnFirstClick}
-  gl={{
-    outputColorSpace: SRGBColorSpace,
-    toneMapping: ACESFilmicToneMapping,
-    toneMappingExposure: 0.85,         // ↓ a bit
-    physicallyCorrectLights: true,
-  }}
->
-  <Suspense fallback={null}>
-    <Sky />
+      <Canvas 
+      camera={{ position: [-5, 0, 5], fov: 60 }} 
+      onClick={startMusicOnFirstClick}
+      dpr={[1, 2]}
+      gl={{
+        outputColorSpace: SRGBColorSpace,
+        toneMapping: ACESFilmicToneMapping, // or THREE.NoToneMapping
+        toneMappingExposure: 1,
+        physicallyCorrectLights: true,
+      }}>
+        <Suspense fallback={null}>
+          {/* Sky and lighting */}
+          <Sky />
+          <Environment preset="sunset" environmentRotation={[0, Math.PI, 0]} />
+          
+          {/* Left side lighting */}
+          <directionalLight position={[-10, 10, 5]} intensity={1.8} color={0xFFE5B4} />
+          {/* Right side lighting */}
+          <directionalLight position={[10, 10, 5]} intensity={1.8} color={0xFFE5B4} />
+          
+          {/* Clouds */}
+          <CloudScene />
+          
+          
+          {/* Horse with Halo - Floating Effect */}
+          <Float
+            speed={1} 
+            rotationIntensity={0.2} 
+            floatIntensity={2}
+            floatingRange={[-0.2, 0.2]}
+          >
+            <Horse />
+          </Float>
+          
 
-    {/* HDRI weaker */}
-    <Environment preset="sunset" intensity={0.6} /* rotation={[0, Math.PI, 0]} */ />
-
-    {/* Ambient softer */}
-    <ambientLight intensity={0.2} />
-
-    {/* One strong key, one soft fill (or remove fill) */}
-    <directionalLight position={[-10, 10, 5]} intensity={1.0} color={0xffe5b4} />
-    <directionalLight position={[10, 10, 5]} intensity={0.3} color={0xffe5b4} />
-
-    <CloudScene />
-
-    <Float speed={1} rotationIntensity={0.2} floatIntensity={2} floatingRange={[-0.2, 0.2]}>
-      <Horse />
-    </Float>
-
-    <OrbitControls
-      enablePan
-      enableZoom
-      enableRotate
-      maxPolarAngle={Math.PI / 2}
-      minDistance={1}
-      maxDistance={50}
-      target={[0, 0, 0]}
-      dampingFactor={0.05}
-      enableDamping
-    />
-  </Suspense>
-</Canvas>
-
+          
+          {/* Controls */}
+          <OrbitControls 
+            enablePan={true}
+            enableZoom={true}
+            enableRotate={true}
+            maxPolarAngle={Math.PI / 2}
+            minDistance={1}
+            maxDistance={50}
+            target={[0, 0, 0]}
+            dampingFactor={0.05}
+            enableDamping={true}
+          />
+        </Suspense>
+      </Canvas>
       
       {/* Audio Element */}
       <audio ref={audioRef} src="/juan-track.mp3" loop />
