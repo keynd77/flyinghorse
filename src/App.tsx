@@ -5,6 +5,7 @@ import Horse from './components/Horse'
 import CloudScene from './components/Clouds'
 import './App.css'
 import InfiniteCloudScroll from './components/InfiniteCloudScroll'
+import { ACESFilmicToneMapping, SRGBColorSpace } from 'three'
 
 function App() {
   const [isPlaying, setIsPlaying] = useState(false)
@@ -64,7 +65,14 @@ function App() {
 
   return (
     <div className="App">
-      <Canvas camera={{ position: [-5, 0, 5], fov: 60 }} dpr={[1, 2]} onClick={startMusicOnFirstClick}>
+      <Canvas camera={{ position: [-5, 0, 5], fov: 60 }} dpr={[1, 2]} onClick={startMusicOnFirstClick}
+        gl={{
+          outputColorSpace: SRGBColorSpace,
+          toneMapping: ACESFilmicToneMapping,
+          toneMappingExposure: 1,
+          
+        }}
+        >
         <Suspense fallback={null}>
           {/* Sky and lighting */}
           <Sky />
