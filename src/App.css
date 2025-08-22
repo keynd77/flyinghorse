@@ -90,6 +90,21 @@
   background-color: rgba(255, 255, 255, 0.2);
 }
 
+.arrow-keys-image {
+  width: 110px;
+  height: auto;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Hide arrow keys on mobile devices */
+@media (max-width: 768px) {
+  .arrow-keys-image {
+    display: none;
+  }
+}
+
 .points-display {
   position: absolute;
   top: 2rem;

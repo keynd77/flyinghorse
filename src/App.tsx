@@ -158,6 +158,11 @@ function App() {
       
       {/* Bottom Text */}
       <div className="bottom-text">
+        <img 
+          src="/arrow-keys.png" 
+          alt="Arrow Keys Movement" 
+          className="arrow-keys-image"
+        />
         <p><span className="selectable">ca</span>: coming soon</p>
         <p className="disclaimer">
           Disclaimer: Memecoins are not investments and carry significant risk. 
