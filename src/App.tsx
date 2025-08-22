@@ -4,6 +4,7 @@ import { Suspense, useState, useRef, useEffect } from 'react'
 import Horse from './components/Horse'
 import CloudScene from './components/Clouds'
 import './App.css'
+import InfiniteCloudScroll from './components/InfiniteCloudScroll'
 
 function App() {
   const [isPlaying, setIsPlaying] = useState(false)
@@ -76,6 +77,7 @@ function App() {
           
           {/* Clouds */}
           <CloudScene />
+          
           
           {/* Horse with Halo - Floating Effect */}
           <Float

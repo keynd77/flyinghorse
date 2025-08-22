@@ -1,29 +1,15 @@
 import { useFrame } from '@react-three/fiber'
-import { useRef } from 'react'
 import * as THREE from 'three'
 import { Clouds, Cloud } from '@react-three/drei'
 
 const CloudScene = () => {
-  const cloudsRef = useRef<THREE.Group>(null)
-
-  useFrame((state, delta) => {
-    if (cloudsRef.current) {
-      // Create endless flying effect - clouds move towards camera
-      cloudsRef.current.position.z += delta * 10
-      
-      // Reset position when clouds get too close to create infinite loop
-      if (cloudsRef.current.position.z > 20) {
-        cloudsRef.current.position.z = -50
-      }
-    }
-
+  useFrame(({ camera }, delta) => {
+    camera.position.z += delta * 10 // fly forward endlessly
   })
 
   return (
-    <group ref={cloudsRef} position={[0, 0, -50]}>
+    <group position={[0, 0, 0]}>
       <Clouds material={THREE.MeshLambertMaterial} limit={400} range={150}>
-        {/* Cloud formations for endless flying effect */}
-
         <Cloud 
           seed={2}
           segments={20}
@@ -48,11 +34,6 @@ const CloudScene = () => {
           color="white"
           position={[-15, 3, 0]}
         />
-
-        
-
-        
-        {/* Distant background clouds */}
         <Cloud 
           concentrate="outside"
           growth={50}
