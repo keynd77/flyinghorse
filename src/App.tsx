@@ -21,6 +21,7 @@ function App() {
   const [isZoomingIn, setIsZoomingIn] = useState(false)
   const [screenshot, setScreenshot] = useState<string | null>(null)
   const [showScreenshotPopup, setShowScreenshotPopup] = useState(false)
+  const [showCopyToast, setShowCopyToast] = useState(false)
   const audioRef = useRef<HTMLAudioElement>(null)
   const controlsRef = useRef<OrbitControlsImpl>(null)
 
@@ -173,7 +174,9 @@ function App() {
         ])
         
         console.log('Screenshot copied to clipboard!')
-        // You could add a toast notification here
+        // Show success toast
+        setShowCopyToast(true)
+        setTimeout(() => setShowCopyToast(false), 3000) // Hide after 3 seconds
       } catch (error) {
         console.error('Failed to copy to clipboard:', error)
         // Fallback: show user how to copy manually
@@ -383,6 +386,14 @@ function App() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+      
+      {/* Copy Success Toast */}
+      {showCopyToast && (
+        <div className="copy-toast">
+          <span className="copy-toast-icon">✓</span>
+          <span className="copy-toast-text">Screenshot copied to clipboard! You can now just past it on 𝕏 or anywhere else.</span>
         </div>
       )}
 

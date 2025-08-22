@@ -387,7 +387,7 @@ canvas {
 .screenshot-popup {
   background-color: white;
   border-radius: 15px;
-  padding: 20px;
+  padding: 0;
   max-width: 90vw;
   max-height: 90vh;
   overflow: auto;
@@ -410,15 +410,18 @@ canvas {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+
   border-bottom: 2px solid #f0f0f0;
-  padding-bottom: 15px;
+
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 10px;
 }
 
 .screenshot-popup-header h3 {
   margin: 0;
   color: #333;
-  font-size: 1.5rem;
+  font-size: 1.1rem;
 }
 
 .close-button {
@@ -443,8 +446,9 @@ canvas {
 }
 
 .screenshot-image-container {
-  margin-bottom: 20px;
+  
   text-align: center;
+  padding: 10px 10px 0 10px;;
 }
 
 .screenshot-image {
@@ -456,6 +460,7 @@ canvas {
 
 .screenshot-actions {
   text-align: center;
+  padding: 10px;
 }
 
 .download-button {
@@ -508,5 +513,45 @@ canvas {
 
 .copy-button:active {
   transform: translateY(0);
+}
+
+/* Copy Success Toast */
+.copy-toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 2000;
+  animation: toastSlideIn 0.3s ease-out;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.copy-toast-icon {
+  color: #4CAF50;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.copy-toast-text {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
