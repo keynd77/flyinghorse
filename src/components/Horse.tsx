@@ -1,5 +1,5 @@
 import { useGLTF, Cloud } from '@react-three/drei'
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
@@ -9,6 +9,15 @@ const Horse = () => {
   const { scene: horseModel } = useGLTF('/horse/source/horse.glb')
   const { scene: haloModel } = useGLTF('/models/helo.glb')
   const { scene: balconyModel } = useGLTF('/models/cloud-balcony.glb')
+  
+  // Points system
+  const [points, setPoints] = useState(0)
+  const [spheres, setSpheres] = useState<Array<{
+    id: number
+    position: [number, number, number]
+    createdAt: number
+    collected: boolean
+  }>>([])
 
   // Smooth movement controls with acceleration
   const keysPressed = useRef<Set<string>>(new Set())
@@ -35,7 +44,7 @@ const Horse = () => {
     }
   }, [])
 
-  // Smooth movement with acceleration in useFrame
+  // Sphere spawning and collection logic
   useFrame((state, delta) => {
     if (!horseRef.current) return
 
@@ -82,6 +91,50 @@ const Horse = () => {
     // Apply the constrained position
     horseRef.current.position.x = newX
     horseRef.current.position.y = newY
+
+    // Random sphere spawning (every 3 seconds on average)
+    if (Math.random() < 0.01) { // 1% chance per frame at 60fps ≈ every 1.67 seconds
+      const newSphere = {
+        id: Date.now(),
+        position: [
+          (Math.random() - 0.5) * boundaryX * 1.6, // Random X within boundaries
+          (Math.random() - 0.5) * boundaryY * 1.6, // Random Y within boundaries
+          0
+        ] as [number, number, number],
+        createdAt: state.clock.elapsedTime,
+        collected: false
+      }
+      setSpheres(prev => [...prev, newSphere])
+    }
+
+    // Check sphere collection and lifetime
+    setSpheres(prev => {
+      const currentTime = state.clock.elapsedTime
+      const sphereLifetime = 5 // Spheres last for 5 seconds
+      const collectionRadius = 1.5 // Distance to collect sphere
+
+      return prev.filter(sphere => {
+        // Remove spheres that are too old
+        if (currentTime - sphere.createdAt > sphereLifetime) {
+          return false
+        }
+
+        // Check if horse is close enough to collect
+        if (!sphere.collected) {
+          const distance = Math.sqrt(
+            Math.pow(newX - sphere.position[0], 2) + 
+            Math.pow(newY - sphere.position[1], 2)
+          )
+          
+          if (distance < collectionRadius) {
+            setPoints(prevPoints => prevPoints + 1)
+            return false // Remove collected sphere
+          }
+        }
+
+        return true
+      })
+    })
   })
 
 
@@ -89,11 +142,12 @@ const Horse = () => {
 
 
   return (
-    <group 
-      ref={horseRef} 
-      position={[0, 0, 0]} 
-      scale={[1, 1, 1]}
-    >
+    <>
+      <group 
+        ref={horseRef} 
+        position={[0, 0, 0]} 
+        scale={[1, 1, 1]}
+      >
       <primitive object={horseModel} />
       
       {/* Cloud balcony under the horse */}
@@ -176,7 +230,31 @@ const Horse = () => {
           
       
          
-    </group>
+      </group>
+
+      {/* Render collectible spheres */}
+      {spheres.map(sphere => (
+        <mesh key={sphere.id} position={sphere.position}>
+          <sphereGeometry args={[0.3, 16, 16]} />
+          <meshBasicMaterial color={0x00FF00} />
+        </mesh>
+      ))}
+
+      {/* Points Display */}
+      <div style={{
+        position: 'absolute',
+        top: '2rem',
+        left: '2rem',
+        color: 'black',
+        fontSize: '2rem',
+        fontFamily: 'EB Garamond, serif',
+        fontWeight: 'bold',
+        zIndex: 1000,
+        pointerEvents: 'none'
+      }}>
+        Points: {points}
+      </div>
+    </>
   )
 }
 
