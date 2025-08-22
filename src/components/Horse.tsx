@@ -1,23 +1,77 @@
-import { useGLTF, Cloud } from '@react-three/drei'
+import { useGLTF, Cloud, Html } from '@react-three/drei'
 import { useRef, useEffect, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
-const Horse = () => {
+// Dynamic debug axes component that shows actual movement direction
+const DebugAxes = ({ screenRight, screenUp, orbitAngle, polarAngle }: { screenRight: THREE.Vector3, screenUp: THREE.Vector3, orbitAngle: number, polarAngle: number }) => {
+  const rightRef = useRef<THREE.Mesh>(null)
+  const upRef = useRef<THREE.Mesh>(null)
+
+  useEffect(() => {
+    if (rightRef.current && screenRight) {
+      const dir = screenRight.clone().normalize()
+      const quat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir)
+      rightRef.current.quaternion.copy(quat)
+      rightRef.current.scale.set(1, dir.length() > 0 ? 8 / dir.length() : 1, 1) // In case not unit, but should be
+    }
+    if (upRef.current && screenUp) {
+      const dir = screenUp.clone().normalize()
+      const quat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir)
+      upRef.current.quaternion.copy(quat)
+      upRef.current.scale.set(1, dir.length() > 0 ? 8 / dir.length() : 1, 1)
+    }
+  }, [screenRight, screenUp])
+
+  return (
+    <>
+      {/* Horse center point */}
+      <mesh position={[0, 0, 0]}>
+        <boxGeometry args={[0.1, 0.1, 0.1]} />
+        <meshBasicMaterial color={0x00FF00} />
+      </mesh>
+      
+      {/* Left/Right movement axis (red arrow) - Shows actual movement direction */}
+      <mesh ref={rightRef} position={[0, 0, 0]}>
+        <cylinderGeometry args={[0.05, 0.05, 8, 8]} />
+        <meshBasicMaterial color={0xFF0000} />
+      </mesh>
+      
+      {/* Up/Down movement axis (blue arrow) - Shows actual movement direction */}
+      <mesh ref={upRef} position={[0, 0, 0]}>
+        <cylinderGeometry args={[0.05, 0.05, 8, 8]} />
+        <meshBasicMaterial color={0x0000FF} />
+      </mesh>
+      
+      {/* Movement direction indicator - shows where D will actually move the horse */}
+      <mesh position={screenRight ? screenRight.clone().multiplyScalar(2) : [0, 0, 0]}>
+        <sphereGeometry args={[0.2, 8, 8]} />
+        <meshBasicMaterial color={0xFF6600} />
+      </mesh>
+      
+      {/* Debug text showing current orbit angle and polar angle */}
+      <Html position={[0, 2, 0]} center>
+        <div style={{ 
+          background: 'rgba(0,0,0,0.8)', 
+          color: 'white', 
+          padding: '5px', 
+          borderRadius: '3px',
+          fontSize: '12px',
+          whiteSpace: 'nowrap'
+        }}>
+          Orbit: {((orbitAngle * 180 / Math.PI) + 360) % 360}° | Polar: {polarAngle.toFixed(1)}°
+        </div>
+      </Html>
+    </>
+  )
+}
+
+export default function Horse() {
   const horseRef = useRef<THREE.Group>(null)
   const haloRef = useRef<THREE.Group>(null)
   const { scene: horseModel } = useGLTF('/horse/source/horse.glb')
   const { scene: haloModel } = useGLTF('/models/helo.glb')
   const { scene: balconyModel } = useGLTF('/models/cloud-balcony.glb')
-  
-  // Points system
-  const [points, setPoints] = useState(0)
-  const [spheres, setSpheres] = useState<Array<{
-    id: number
-    position: [number, number, number]
-    createdAt: number
-    collected: boolean
-  }>>([])
 
   // Smooth movement controls with acceleration
   const keysPressed = useRef<Set<string>>(new Set())
@@ -25,6 +79,13 @@ const Horse = () => {
   const maxSpeed = 8
   const acceleration = 4
   const deceleration = 2
+  
+  // Store orbit angle and polar for debug display
+  // Store orbit angle for debug display (using refs to prevent re-renders)
+  const orbitAngle = useRef(0)
+  const polarAngle = useRef(90)
+  const screenRight = useRef(new THREE.Vector3())
+  const screenUp = useRef(new THREE.Vector3())
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -63,21 +124,45 @@ const Horse = () => {
 
     const moveSpeed = currentSpeed.current * delta
     
-    // Calculate new position
-    let newX = horseRef.current.position.x
-    let newY = horseRef.current.position.y
+    // Get camera and calculate orbit control rotation for view-relative movement
+    const camera = state.camera
+    const horsePos = horseRef.current.position
+    
+    // Calculate relative camera position
+    const relativeCamPos = camera.position.clone().sub(horsePos)
+    
+    // Calculate the horizontal rotation angle from the camera's position
+    const cameraAngle = Math.atan2(relativeCamPos.x, relativeCamPos.z)
+    
+    // Calculate polar angle
+    const camDistance = relativeCamPos.length()
+    const camPolarAngle = Math.acos(relativeCamPos.y / camDistance)
+    
+    // Update angles for debug display
+    orbitAngle.current = cameraAngle
+    polarAngle.current = camPolarAngle * 180 / Math.PI
+    
+    // Calculate screen-relative directions using camera quaternion
+    const newScreenRight = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion).normalize()
+    const newScreenUp = new THREE.Vector3(0, 1, 0).applyQuaternion(camera.quaternion).normalize()
+    
+    screenRight.current.copy(newScreenRight)
+    screenUp.current.copy(newScreenUp)
+    
+    // Calculate new position with screen-relative movement
+    const newPos = horsePos.clone()
     
     if (keysPressed.current.has('arrowleft') || keysPressed.current.has('a')) {
-      newX -= moveSpeed
+      newPos.add(newScreenRight.clone().negate().multiplyScalar(moveSpeed))
     }
     if (keysPressed.current.has('arrowright') || keysPressed.current.has('d')) {
-      newX += moveSpeed
+      newPos.add(newScreenRight.multiplyScalar(moveSpeed))
     }
     if (keysPressed.current.has('arrowup') || keysPressed.current.has('w')) {
-      newY += moveSpeed
+      newPos.add(newScreenUp.multiplyScalar(moveSpeed))
     }
     if (keysPressed.current.has('arrowdown') || keysPressed.current.has('s')) {
-      newY -= moveSpeed
+      newPos.add(newScreenUp.clone().negate().multiplyScalar(moveSpeed))
     }
     
     // Apply boundary limits based on max zoom out
@@ -85,177 +170,119 @@ const Horse = () => {
     const boundaryX = maxZoomDistance * 0.8 // 80% of max zoom for safety margin
     const boundaryY = maxZoomDistance * 0.6 // 60% of max zoom for vertical safety
     
-    newX = Math.max(-boundaryX, Math.min(boundaryX, newX))
-    newY = Math.max(-boundaryY, Math.min(boundaryY, newY))
+    newPos.x = THREE.MathUtils.clamp(newPos.x, -boundaryX, boundaryX)
+    newPos.y = THREE.MathUtils.clamp(newPos.y, -boundaryY, boundaryY)
+    newPos.z = THREE.MathUtils.clamp(newPos.z, -boundaryX, boundaryX)
     
     // Apply the constrained position
-    horseRef.current.position.x = newX
-    horseRef.current.position.y = newY
-
-    // Random sphere spawning (every 3 seconds on average)
-    if (Math.random() < 0.01) { // 1% chance per frame at 60fps ≈ every 1.67 seconds
-      const newSphere = {
-        id: Date.now(),
-        position: [
-          (Math.random() - 0.5) * boundaryX * 1.6, // Random X within boundaries
-          (Math.random() - 0.5) * boundaryY * 1.6, // Random Y within boundaries
-          0
-        ] as [number, number, number],
-        createdAt: state.clock.elapsedTime,
-        collected: false
-      }
-      setSpheres(prev => [...prev, newSphere])
+    horseRef.current.position.copy(newPos)
+    
+    // Debug: Log orbit angle and movement direction
+    if (Math.random() < 0.1) { // Only log 10% of the time to avoid spam
+      const orbitAngleDegrees = ((cameraAngle * 180 / Math.PI) + 360) % 360
+      const calculatedRotation = ((-cameraAngle + Math.PI/2) * 180 / Math.PI + 360) % 360
+      console.log(`🎯 Orbit Angle: ${orbitAngleDegrees.toFixed(1)}°`)
+      console.log(`📐 Polar Angle: ${ (camPolarAngle * 180 / Math.PI).toFixed(1) }°`)
+      console.log(`🔄 Calculated Rotation: ${calculatedRotation.toFixed(1)}°`)
+      console.log(`🐎 Horse at: [${newPos.x.toFixed(2)}, ${newPos.y.toFixed(2)}, ${newPos.z.toFixed(2)}]`)
+      console.log(`📐 Screen Right: [${newScreenRight.x.toFixed(2)}, ${newScreenRight.y.toFixed(2)}, ${newScreenRight.z.toFixed(2)}]`)
+      console.log(`📐 Screen Up: [${newScreenUp.x.toFixed(2)}, ${newScreenUp.y.toFixed(2)}, ${newScreenUp.z.toFixed(2)}]`)
     }
-
-    // Check sphere collection and lifetime
-    setSpheres(prev => {
-      const currentTime = state.clock.elapsedTime
-      const sphereLifetime = 5 // Spheres last for 5 seconds
-      const collectionRadius = 1.5 // Distance to collect sphere
-
-      return prev.filter(sphere => {
-        // Remove spheres that are too old
-        if (currentTime - sphere.createdAt > sphereLifetime) {
-          return false
-        }
-
-        // Check if horse is close enough to collect
-        if (!sphere.collected) {
-          const distance = Math.sqrt(
-            Math.pow(newX - sphere.position[0], 2) + 
-            Math.pow(newY - sphere.position[1], 2)
-          )
-          
-          if (distance < collectionRadius) {
-            setPoints(prevPoints => prevPoints + 1)
-            return false // Remove collected sphere
-          }
-        }
-
-        return true
-      })
-    })
   })
-
-
-
-
 
   return (
     <>
-      <group 
-        ref={horseRef} 
-        position={[0, 0, 0]} 
-        scale={[1, 1, 1]}
-      >
-      <primitive object={horseModel} />
-      
-      {/* Cloud balcony under the horse */}
-      <primitive object={balconyModel} position={[0, -0.1, 0]} scale={[2, 2, 2]} />
-      
-      {/* Drei Cloud around the balcony */}
-      <Cloud 
-        position={[0, -1, -0]}
-        scale={[0.2, 0.2, 0.2]}
-        opacity={1}
-        speed={0.1}
-        bounds={[6, 3, 6]}
-        segments={40}
-        color="white"
-      />
-      <Cloud 
-        position={[-1.5, -0.1, 1.2]}
-        scale={[0.2, 0.2, 0.2]}
-        opacity={1}
-        speed={0.1}
-        bounds={[5, 2, 5]}
-        segments={40}
-        color="white"
-      />
-       <Cloud 
-        position={[1, 0, 1.5]}
-        scale={[0.2, 0.2, 0.2]}
-        opacity={1}
-        speed={0.1}
-        bounds={[5, 3, 5]}
-        segments={40}
-        color="white"
-      />
-       <Cloud 
-        position={[1, 0, -1]}
-        scale={[0.2, 0.2, 0.2]}
-        opacity={1}
-        speed={0.1}
-        bounds={[5, 3, 5]}
-        segments={100}
-        color="white"
-      />
-         <Cloud 
-        position={[-1, 0.1, -0.5]}
-        scale={[0.2, 0.2, 0.2]}
-        opacity={1}
-        speed={0.1}
-        bounds={[5, 3, 5]}
-        segments={40}
-        color="white"
-      />
-          <Cloud 
-        position={[-1, 0.1, -1.6]}
-        scale={[0.2, 0.2, 0.2]}
-        opacity={1}
-        speed={0.1}
-        bounds={[5, 3, 5]}
-        segments={40}
-        color="white"
-      />
+              <group 
+          ref={horseRef} 
+          position={[0, 0, 0]} 
+          scale={[1, 1, 1]}
+          userData={{ isHorseGroup: true }}
+                >
+          <primitive object={horseModel}/>
+        
+        {/* Cloud balcony under the horse */}
+        <primitive object={balconyModel} position={[0, -0.1, 0]} scale={[2, 2, 2]} />
+        
+        {/* Drei Cloud around the balcony */}
+        <Cloud 
+          position={[0, -1, -0]}
+          scale={[0.2, 0.2, 0.2]}
+          opacity={1}
+          speed={0.1}
+          bounds={[6, 3, 6]}
+          segments={40}
+          color="white"
+        />
+        <Cloud 
+          position={[-1.5, -0.1, 1.2]}
+          scale={[0.2, 0.2, 0.2]}
+          opacity={1}
+          speed={0.1}
+          bounds={[5, 2, 5]}
+          segments={40}
+          color="white"
+        />
+        <Cloud 
+          position={[1, 0, 1.5]}
+          scale={[0.2, 0.2, 0.2]}
+          opacity={1}
+          speed={0.1}
+          bounds={[5, 3, 5]}
+          segments={40}
+          color="white"
+        />
+        <Cloud 
+          position={[1, 0, -1]}
+          scale={[0.2, 0.2, 0.2]}
+          opacity={1}
+          speed={0.1}
+          bounds={[5, 3, 5]}
+          segments={100}
+          color="white"
+        />
+        <Cloud 
+          position={[-1, 0.1, -0.5]}
+          scale={[0.2, 0.2, 0.2]}
+          opacity={1}
+          speed={0.1}
+          bounds={[5, 3, 5]}
+          segments={40}
+          color="white"
+        />
+        <Cloud 
+          position={[-1, 0.1, -1.6]}
+          scale={[0.2, 0.2, 0.2]}
+          opacity={1}
+          speed={0.1}
+          bounds={[5, 3, 5]}
+          segments={40}
+          color="white"
+        />
 
-      {/* Halo */}
-      <group ref={haloRef} position={[0, 1.92, 0.98]} scale={[1, 1, 1]}>
-        <primitive object={haloModel} />
-      </group>
+        {/* Halo */}
+        <group ref={haloRef} position={[0, 1.92, 0.98]} scale={[1, 1, 1]}>
+          <primitive object={haloModel} />
+        </group>
       
-            {/* Fixed Light Source */}
+
+      
+        {/* Fixed Light Source */}
   
       
-      {/* Ambient Horse Lighting */}
-      <spotLight 
-        position={[-1.2, 2.2, 0]} 
-        color={0xffffff} 
-        decay={2}
-        power={20}
-        penumbra={0.2}
-        intensity={10} 
-      />
+        {/* Ambient Horse Lighting */}
+        <spotLight 
+          position={[1.2, 2.2, 0]} 
+          color={0xffffff} 
+          decay={2}
+          power={20}
+          penumbra={0.2}
+          intensity={10} 
+        />
       
           
       
          
       </group>
-
-      {/* Render collectible spheres */}
-      {spheres.map(sphere => (
-        <mesh key={sphere.id} position={sphere.position}>
-          <sphereGeometry args={[0.3, 16, 16]} />
-          <meshBasicMaterial color={0x00FF00} />
-        </mesh>
-      ))}
-
-      {/* Points Display */}
-      <div style={{
-        position: 'absolute',
-        top: '2rem',
-        left: '2rem',
-        color: 'black',
-        fontSize: '2rem',
-        fontFamily: 'EB Garamond, serif',
-        fontWeight: 'bold',
-        zIndex: 1000,
-        pointerEvents: 'none'
-      }}>
-        Points: {points}
-      </div>
     </>
   )
 }
-
-export default Horse

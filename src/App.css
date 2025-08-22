@@ -13,7 +13,13 @@
   text-align: right;
   color: black;
   z-index: 1000;
-  pointer-events: none;
+}
+
+.music-button-container {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  z-index: 1000;
 }
 
 .ui-overlay h1 {
@@ -54,6 +60,23 @@
   text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
 }
 
+.points-display {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.points-display p {
+  font-family: 'EB Garamond', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #000000;
+  margin: 0;
+  text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);
+}
+
 @keyframes glow {
   from {
     filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
@@ -88,6 +111,142 @@ canvas {
   
   .ui-overlay p {
     font-size: 1rem;
+  }
+}
+
+/* Music Button Styles - Working Animation System */
+.play_music {
+  z-index: 10;
+  background: none;
+  border: none;
+  outline: none;
+  appearance: none;
+  color: white;
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+  transform: scale(1.2);
+  position: relative;
+}
+
+.play_music .play_music_pause {
+  display: flex;
+}
+
+.play_music .play_music_play {
+  display: none;
+}
+
+.play_music span {
+  line-height: 1;
+  display: flex;
+  gap: 0.5rem;
+  text-transform: uppercase;
+  align-items: center;
+}
+
+.play_music .play_music_icon svg {
+  width: 15px;
+  height: auto;
+  fill: #fff;
+}
+
+.play_music.playing .play_music_icon svg #Line_1 {
+  animation: pulse 1s infinite;
+  animation-delay: 0.15s;
+}
+
+.play_music.playing .play_music_icon svg #Line_2 {
+  animation: pulse 1s infinite;
+  animation-delay: 0.3s;
+}
+
+.play_music.playing .play_music_icon svg #Line_3 {
+  animation: pulse 1s infinite;
+  animation-delay: 0.45s;
+}
+
+.play_music .play_music_icon {
+  display: flex;
+  width: 60px;
+  height: 60px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  position: relative;
+  transition: all 0.2s ease-in-out;
+  overflow: hidden;
+  cursor: pointer;
+  background-color: transparent;
+  z-index: 102;
+}
+
+.play_music .play_music_icon svg {
+  z-index: 2;
+  width: 20px;
+  fill: white;
+  z-index: 104;
+}
+
+.play_music .play_music_text {
+  opacity: 0;
+  position: absolute;
+  transform: translate(0%, -50%);
+  left: 100%;
+  width: 100px;
+  top: 50%;
+}
+
+.play_music.playing .play_music_text_play {
+  display: block;
+}
+
+.play_music.playing .play_music_text_pause {
+  display: none;
+}
+
+.play_music .play_music_text_play {
+  display: none;
+}
+
+.play_music .play_music_text_pause {
+  display: block;
+}
+
+.play_music .play_music_text_muted {
+  display: none;
+}
+
+.play_music.muted .play_music_text_muted {
+  display: block;
+}
+
+.play_music.muted .play_music_text_play,
+.play_music.muted .play_music_text_pause {
+  display: none;
+}
+
+.play_music:hover .play_music_text {
+  opacity: 1;
+  transition: all 0.5s ease-in-out;
+  transition-delay: 0.2s;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scaleY(1);
+    transform-origin: 50% 50%;
+  }
+
+  50% {
+    transform: scaleY(0.7);
+    transform-origin: 50% 50%;
+  }
+
+  100% {
+    transform: scaleY(1);
+    transform-origin: 50% 50%;
   }
 }
 
