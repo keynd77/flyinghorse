@@ -71,7 +71,7 @@ function App() {
           <Environment preset="sunset" environmentRotation={[0, Math.PI, 0]} />
           {/* <ambientLight intensity={0.5} /> */}
           {/* Left side lighting */}
-          <directionalLight position={[-10, 10, 5]} intensity={1.8} color={0xFFE5B4} />
+          {/* <directionalLight position={[-10, 10, 5]} intensity={1.8} color={0xFFE5B4} /> */}
           {/* Right side lighting */}
          
           
