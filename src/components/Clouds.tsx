@@ -4,7 +4,7 @@ import { Clouds, Cloud, Float } from '@react-three/drei'
 
 const CloudScene = () => {
   useFrame(({ camera }, delta) => {
-    camera.position.z += delta * 1 // fly forward endlessly
+    camera.position.z += delta * 0.5 // fly forward endlessly
   })
 
   return (
