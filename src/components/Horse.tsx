@@ -10,8 +10,12 @@ const Horse = () => {
   const { scene: haloModel } = useGLTF('/models/helo.glb')
   const { scene: balconyModel } = useGLTF('/models/cloud-balcony.glb')
 
-  // Smooth movement controls
+  // Smooth movement controls with acceleration
   const keysPressed = useRef<Set<string>>(new Set())
+  const currentSpeed = useRef<number>(0)
+  const maxSpeed = 8
+  const acceleration = 4
+  const deceleration = 2
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -31,24 +35,53 @@ const Horse = () => {
     }
   }, [])
 
-  // Smooth movement in useFrame
+  // Smooth movement with acceleration in useFrame
   useFrame((state, delta) => {
     if (!horseRef.current) return
 
-    const moveSpeed = 2 * delta // Smooth movement based on frame time
+    // Check if any movement keys are pressed
+    const isMoving = keysPressed.current.has('arrowleft') || keysPressed.current.has('a') ||
+                    keysPressed.current.has('arrowright') || keysPressed.current.has('d') ||
+                    keysPressed.current.has('arrowup') || keysPressed.current.has('w') ||
+                    keysPressed.current.has('arrowdown') || keysPressed.current.has('s')
+
+    // Update speed based on input
+    if (isMoving) {
+      currentSpeed.current = Math.min(currentSpeed.current + acceleration * delta, maxSpeed)
+    } else {
+      currentSpeed.current = Math.max(currentSpeed.current - deceleration * delta, 0)
+    }
+
+    const moveSpeed = currentSpeed.current * delta
+    
+    // Calculate new position
+    let newX = horseRef.current.position.x
+    let newY = horseRef.current.position.y
     
     if (keysPressed.current.has('arrowleft') || keysPressed.current.has('a')) {
-      horseRef.current.position.x -= moveSpeed
+      newX -= moveSpeed
     }
     if (keysPressed.current.has('arrowright') || keysPressed.current.has('d')) {
-      horseRef.current.position.x += moveSpeed
+      newX += moveSpeed
     }
     if (keysPressed.current.has('arrowup') || keysPressed.current.has('w')) {
-      horseRef.current.position.y += moveSpeed
+      newY += moveSpeed
     }
     if (keysPressed.current.has('arrowdown') || keysPressed.current.has('s')) {
-      horseRef.current.position.y -= moveSpeed
+      newY -= moveSpeed
     }
+    
+    // Apply boundary limits based on max zoom out
+    const maxZoomDistance = 50 // Matches the maxDistance in OrbitControls
+    const boundaryX = maxZoomDistance * 0.8 // 80% of max zoom for safety margin
+    const boundaryY = maxZoomDistance * 0.6 // 60% of max zoom for vertical safety
+    
+    newX = Math.max(-boundaryX, Math.min(boundaryX, newX))
+    newY = Math.max(-boundaryY, Math.min(boundaryY, newY))
+    
+    // Apply the constrained position
+    horseRef.current.position.x = newX
+    horseRef.current.position.y = newY
   })
 
 
@@ -67,6 +100,15 @@ const Horse = () => {
       <primitive object={balconyModel} position={[0, -0.1, 0]} scale={[2, 2, 2]} />
       
       {/* Drei Cloud around the balcony */}
+      <Cloud 
+        position={[0, -1, -0]}
+        scale={[0.2, 0.2, 0.2]}
+        opacity={1}
+        speed={0.1}
+        bounds={[6, 3, 6]}
+        segments={40}
+        color="white"
+      />
       <Cloud 
         position={[-1.5, -0.1, 1.2]}
         scale={[0.2, 0.2, 0.2]}
