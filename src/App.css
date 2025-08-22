@@ -41,7 +41,7 @@
   font-size: 1.5rem;
   margin: 1rem 0 0 0;
   opacity: 0.9;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  
   font-weight: 300;
 }
 
@@ -49,9 +49,10 @@
   position: absolute;
   bottom: 2rem;
   z-index: 1000;
-  pointer-events: none;
   left: 50%;
   transform: translateX(-50%);
+  text-align: center;
+  max-width: 90vw;
 }
 
 .bottom-text p {
@@ -61,6 +62,34 @@
   font-weight: bold;
   color: #000000;
   margin: 0;
+  word-break: break-word;
+  hyphens: auto;
+}
+
+.bottom-text .disclaimer {
+  font-size: 0.9rem;
+  font-weight: 300;
+  color: #666666;
+  margin-top: 0.5rem;
+  line-height: 1.2;
+  opacity: 0.5;
+  max-width: 600px;
+  text-align: center;
+  word-break: break-word;
+  hyphens: auto;
+}
+
+.bottom-text .selectable {
+  user-select: text;
+  cursor: text;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 2px 4px;
+  border-radius: 3px;
+  transition: background-color 0.2s ease;
+}
+
+.bottom-text .selectable:hover {
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 .points-display {
@@ -105,6 +134,15 @@ canvas {
   .ui-overlay p {
     font-size: 1.2rem;
   }
+  
+  .bottom-text p {
+    font-size: 1.2rem;
+  }
+  
+  .bottom-text .disclaimer {
+    font-size: 0.8rem;
+    max-width: 80vw;
+  }
 }
 
 @media (max-width: 480px) {
@@ -114,6 +152,16 @@ canvas {
   
   .ui-overlay p {
     font-size: 1rem;
+  }
+  
+  .bottom-text p {
+    font-size: 1rem;
+  }
+  
+  .bottom-text .disclaimer {
+    font-size: 0.7rem;
+    max-width: 85vw;
+    margin-top: 0.3rem;
   }
 }
 

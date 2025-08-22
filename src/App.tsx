@@ -150,7 +150,7 @@ function App() {
       
       {/* UI Overlay */}
       <div className="ui-overlay">
-        <h1>Juan.</h1>
+        <h1>juan.</h1>
         
         {/* Music Button */}
        
@@ -158,7 +158,11 @@ function App() {
       
       {/* Bottom Text */}
       <div className="bottom-text">
-        <p>ca: coming soon</p>
+        <p><span className="selectable">ca</span>: coming soon</p>
+        <p className="disclaimer">
+          Disclaimer: Memecoins are not investments and carry significant risk. 
+          This is for entertainment purposes only. Never invest more than you can afford to lose.
+        </p>
       </div>
       
 
