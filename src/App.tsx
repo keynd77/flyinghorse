@@ -4,15 +4,25 @@ import { Suspense, useState, useRef, useEffect } from 'react'
 import Horse from './components/Horse'
 import CloudScene from './components/Clouds'
 import './App.css'
+import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
 import InfiniteCloudScroll from './components/InfiniteCloudScroll'
+
+
 import { ACESFilmicToneMapping, SRGBColorSpace } from 'three'
+
+
 
 function App() {
   const [isPlaying, setIsPlaying] = useState(false)
   const [isPaused, setIsPaused] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
   const [hasInteracted, setHasInteracted] = useState(false)
+  const [isZoomingOut, setIsZoomingOut] = useState(false)
+  const [isZoomingIn, setIsZoomingIn] = useState(false)
+  const [screenshot, setScreenshot] = useState<string | null>(null)
+  const [showScreenshotPopup, setShowScreenshotPopup] = useState(false)
   const audioRef = useRef<HTMLAudioElement>(null)
+  const controlsRef = useRef<OrbitControlsImpl>(null)
 
   useEffect(() => {
     // Check localStorage for mute state
@@ -63,6 +73,171 @@ function App() {
     }
   }
 
+  // Auto zoom out and back in effect
+  useEffect(() => {
+    if (!controlsRef.current) return
+
+    const startAutoZoom = () => {
+      setIsZoomingOut(true)
+      
+      // Zoom out over 3 seconds
+      const zoomOutDuration = 3000
+      const startTime = Date.now()
+      
+      const zoomOut = () => {
+        const elapsed = Date.now() - startTime
+        const progress = Math.min(elapsed / zoomOutDuration, 1)
+        
+        if (controlsRef.current) {
+          const currentDistance = controlsRef.current.getDistance()
+          const targetDistance = 50 // maxDistance
+          const newDistance = currentDistance + (targetDistance - currentDistance) * 0.02
+          
+          // Use the correct zoom method
+          controlsRef.current.object.position.z = newDistance
+        }
+        
+        if (progress < 1) {
+          requestAnimationFrame(zoomOut)
+        } else {
+          // Start zooming back in
+          setIsZoomingOut(false)
+          setIsZoomingIn(true)
+          zoomBackIn()
+        }
+      }
+      
+      zoomOut()
+    }
+    
+    const zoomBackIn = () => {
+      const startTime = Date.now()
+      const zoomInDuration = 3000
+      
+      const zoomIn = () => {
+        const elapsed = Date.now() - startTime
+        const progress = Math.min(elapsed / zoomInDuration, 1)
+        
+        if (controlsRef.current) {
+          const currentDistance = controlsRef.current.getDistance()
+          const targetDistance = 5 // close distance
+          const newDistance = currentDistance + (targetDistance - currentDistance) * 0.02
+          
+          // Use the correct zoom method
+          controlsRef.current.object.position.z = newDistance
+        }
+        
+        if (progress < 1) {
+          requestAnimationFrame(zoomIn)
+        } else {
+          setIsZoomingIn(false)
+        }
+      }
+      
+      zoomIn()
+    }
+    
+    // Start auto zoom after 2 seconds
+    const timer = setTimeout(startAutoZoom, 2000)
+    
+    return () => clearTimeout(timer)
+  }, [])
+
+  const handleScreenshot = (image: string) => {
+    console.log('Screenshot captured:', image.substring(0, 50) + '...')
+    setScreenshot(image)
+    setShowScreenshotPopup(true)
+    console.log('Popup should be visible now')
+    return null
+  }
+
+  const downloadScreenshot = () => {
+    if (screenshot) {
+      const link = document.createElement('a')
+      link.href = screenshot
+      link.download = 'juan-heaven-screenshot.png'
+      link.click()
+    }
+  }
+
+  const copyScreenshot = async () => {
+    if (screenshot) {
+      try {
+        // Convert data URL to blob
+        const response = await fetch(screenshot)
+        const blob = await response.blob()
+        
+        // Try to copy to clipboard
+        await navigator.clipboard.write([
+          new (window as any).ClipboardItem({ [blob.type]: blob })
+        ])
+        
+        console.log('Screenshot copied to clipboard!')
+        // You could add a toast notification here
+      } catch (error) {
+        console.error('Failed to copy to clipboard:', error)
+        // Fallback: show user how to copy manually
+        alert('Copy to clipboard failed. You can right-click the image and select "Copy Image" instead.')
+      }
+    }
+  }
+
+  const closeScreenshotPopup = () => {
+    setShowScreenshotPopup(false)
+    setScreenshot(null)
+  }
+
+  const takeScreenshot = () => {
+    console.log('Taking screenshot of entire scene')
+    
+    try {
+      // Get the Three.js canvas directly
+      const canvas = document.querySelector('canvas')
+      if (canvas) {
+        // Create a temporary canvas to add the watermark
+        const tempCanvas = document.createElement('canvas')
+        tempCanvas.width = canvas.width
+        tempCanvas.height = canvas.height
+        const tempCtx = tempCanvas.getContext('2d')
+        
+        if (tempCtx) {
+          // Draw the original screenshot
+          tempCtx.drawImage(canvas, 0, 0)
+          
+          // Add "juan." text watermark
+          tempCtx.font = 'bold 72px "EB Garamond", serif'
+          tempCtx.letterSpacing = '0.05em'
+          tempCtx.fillStyle = 'rgba(0, 0, 0, 0.9)'
+          
+          // Position text more to the left and down
+          const text = 'juan.'
+          const textX = canvas.width - 250
+          const textY = 120
+          
+          // Draw just the black text, no stroke
+          tempCtx.fillText(text, textX, textY)
+          
+          // Convert to data URL
+          const dataURL = tempCanvas.toDataURL('image/png')
+          console.log('Screenshot with watermark created, calling handleScreenshot')
+          handleScreenshot(dataURL)
+        } else {
+          console.error('Failed to get 2D context for temp canvas')
+        }
+      } else {
+        console.error('Canvas not found')
+      }
+    } catch (error) {
+      console.error('Failed to take screenshot:', error)
+    }
+  }
+
+
+
+
+
+
+
   return (
     <div className="App">
       <Canvas camera={{ position: [-5, 0, 5], fov: 60 }} dpr={[1, 2]} onClick={startMusicOnFirstClick}
@@ -70,8 +245,9 @@ function App() {
           outputColorSpace: SRGBColorSpace,
           toneMapping: ACESFilmicToneMapping,
           toneMappingExposure: 1,
-          
+          preserveDrawingBuffer: true
         }}
+
         >
         <Suspense fallback={null}>
           {/* Sky and lighting */}
@@ -101,6 +277,7 @@ function App() {
           
           {/* Controls */}
           <OrbitControls 
+            ref={controlsRef}
             enablePan={true}
             enableZoom={true}
             enableRotate={true}
@@ -113,6 +290,8 @@ function App() {
           />
         </Suspense>
       </Canvas>
+      
+
       
       {/* Audio Element */}
       <audio ref={audioRef} src="/juan-track.mp3" loop />
@@ -136,16 +315,28 @@ function App() {
           </span>
         </button>
         
-        {/* Twitter Button */}
-        <a 
-          href="https://x.com/i/communities/1959007545399681337" 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="twitter-button"
-          title="Follow us on Twitter"
-        >
-          <span className="twitter-icon">𝕏</span>
-        </a>
+                 {/* Twitter Button */}
+         <a 
+           href="https://x.com/i/communities/1959007545399681337" 
+           target="_blank" 
+           rel="noopener noreferrer"
+           className="twitter-button"
+           title="Follow us on Twitter"
+         >
+           <span className="twitter-icon">𝕏</span>
+         </a>
+         
+         {/* Screenshot Button */}
+         <button 
+           className="screenshot-button" 
+           title="Take Screenshot"
+           onClick={() => {
+             // Take screenshot using preserveDrawingBuffer
+             takeScreenshot()
+           }}
+         >
+           <img src="/cam-icon.png" alt="Camera" className="screenshot-icon" />
+         </button>
       </div>
       
       {/* UI Overlay */}
@@ -170,6 +361,30 @@ function App() {
         </p>
       </div>
       
+
+      
+      {/* Screenshot Popup */}
+      {showScreenshotPopup && screenshot && (
+        <div className="screenshot-popup-overlay" onClick={closeScreenshotPopup}>
+          <div className="screenshot-popup" onClick={(e) => e.stopPropagation()}>
+            <div className="screenshot-popup-header">
+              <h3>Screenshot Captured!</h3>
+              <button className="close-button" onClick={closeScreenshotPopup}>×</button>
+            </div>
+            <div className="screenshot-image-container">
+              <img src={screenshot} alt="Screenshot" className="screenshot-image" />
+            </div>
+            <div className="screenshot-actions">
+              <button className="copy-button" onClick={copyScreenshot}>
+                Copy to Clipboard
+              </button>
+              <button className="download-button" onClick={downloadScreenshot}>
+                Download Screenshot
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   )
