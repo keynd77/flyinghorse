@@ -5,7 +5,6 @@ import Horse from './components/Horse'
 import CloudScene from './components/Clouds'
 import './App.css'
 import InfiniteCloudScroll from './components/InfiniteCloudScroll'
-import { ACESFilmicToneMapping, SRGBColorSpace } from 'three'
 
 function App() {
   const [isPlaying, setIsPlaying] = useState(false)
@@ -65,25 +64,16 @@ function App() {
 
   return (
     <div className="App">
-      <Canvas 
-      camera={{ position: [-5, 0, 5], fov: 60 }} 
-      onClick={startMusicOnFirstClick}
-      dpr={[1, 2]}
-      gl={{
-        outputColorSpace: SRGBColorSpace,
-        toneMapping: ACESFilmicToneMapping, // or THREE.NoToneMapping
-        toneMappingExposure: 1,
-        physicallyCorrectLights: true,
-      }}>
+      <Canvas camera={{ position: [-5, 0, 5], fov: 60 }} onClick={startMusicOnFirstClick}>
         <Suspense fallback={null}>
           {/* Sky and lighting */}
           <Sky />
           <Environment preset="sunset" environmentRotation={[0, Math.PI, 0]} />
-          <ambientLight intensity={0.7} />
+          <ambientLight intensity={1.0} />
           {/* Left side lighting */}
-          <directionalLight position={[-10, 10, 5]} intensity={1.2} color={0xFFE5B4} />
+          <directionalLight position={[-10, 10, 5]} intensity={1.8} color={0xFFE5B4} />
           {/* Right side lighting */}
-          <directionalLight position={[10, 10, 5]} intensity={1.2} color={0xFFE5B4} />
+          <directionalLight position={[10, 10, 5]} intensity={1.8} color={0xFFE5B4} />
           
           {/* Clouds */}
           <CloudScene />
@@ -137,17 +127,6 @@ function App() {
             </svg>
           </span>
         </button>
-        
-        {/* Twitter Button */}
-        <a 
-          href="https://twitter.com/yourusername" 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="twitter-button"
-          title="Follow us on Twitter"
-        >
-          <span className="twitter-icon">𝕏</span>
-        </a>
       </div>
       
       {/* UI Overlay */}
