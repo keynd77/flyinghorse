@@ -135,6 +135,17 @@ function App() {
             </svg>
           </span>
         </button>
+        
+        {/* Twitter Button */}
+        <a 
+          href="https://x.com/i/communities/1959007545399681337" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="twitter-button"
+          title="Follow us on Twitter"
+        >
+          <span className="twitter-icon">𝕏</span>
+        </a>
       </div>
       
       {/* UI Overlay */}
