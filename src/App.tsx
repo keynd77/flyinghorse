@@ -79,7 +79,7 @@ function App() {
           {/* Sky and lighting */}
           <Sky />
           <Environment preset="sunset" environmentRotation={[0, Math.PI, 0]} />
-          <ambientLight intensity={0.5} />
+          <ambientLight intensity={0.7} />
           {/* Left side lighting */}
           <directionalLight position={[-10, 10, 5]} intensity={1.2} color={0xFFE5B4} />
           {/* Right side lighting */}
@@ -137,6 +137,17 @@ function App() {
             </svg>
           </span>
         </button>
+        
+        {/* Twitter Button */}
+        <a 
+          href="https://twitter.com/yourusername" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="twitter-button"
+          title="Follow us on Twitter"
+        >
+          <span className="twitter-icon">𝕏</span>
+        </a>
       </div>
       
       {/* UI Overlay */}
