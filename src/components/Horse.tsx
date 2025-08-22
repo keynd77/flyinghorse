@@ -270,14 +270,7 @@ export default function Horse() {
   
       
         {/* Ambient Horse Lighting */}
-        <spotLight 
-          position={[1.2, 2.2, 0]} 
-          color={0xffffff} 
-          decay={2}
-          power={2}
-          penumbra={0.2}
-          intensity={1} 
-        />
+       
       
           
       
