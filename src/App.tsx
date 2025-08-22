@@ -73,7 +73,7 @@ function App() {
           {/* Left side lighting */}
           <directionalLight position={[-10, 10, 5]} intensity={1.8} color={0xFFE5B4} />
           {/* Right side lighting */}
-          <directionalLight position={[10, 10, 5]} intensity={1.8} color={0xFFE5B4} />
+         
           
           {/* Clouds */}
           <CloudScene />
