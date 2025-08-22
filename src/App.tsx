@@ -64,7 +64,7 @@ function App() {
 
   return (
     <div className="App">
-      <Canvas camera={{ position: [-5, 0, 5], fov: 60 }} onClick={startMusicOnFirstClick}>
+      <Canvas camera={{ position: [-5, 0, 5], fov: 60 }} dpr={[1, 2]} onClick={startMusicOnFirstClick}>
         <Suspense fallback={null}>
           {/* Sky and lighting */}
           <Sky />
