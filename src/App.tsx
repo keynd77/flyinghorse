@@ -393,7 +393,7 @@ function App() {
            alt="Arrow Keys Movement" 
            className="arrow-keys-image"
          />
-         <p><span className="selectable">ca</span>: coming soon</p>
+         <p><span className="selectable">ca</span>: 5efQfRqBwYDob34CdeYyxnYAhPLKk4Y1Dy3FFNV2C777</p>
          <p className="disclaimer">
            Disclaimer: Memecoins are not investments and carry significant risk. 
            This is for entertainment purposes only. Never invest more than you can afford to lose.
