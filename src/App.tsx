@@ -263,9 +263,14 @@ function App() {
 
         >
         <Suspense fallback={null}>
-          {/* Sky and lighting */}
-          <Sky sunPosition={[100, 20, 100]} />
-          <Environment preset="sunset" />
+  {/* Sky and lighting */}
+  <Sky sunPosition={[100, 20, 100]} />
+  <Environment preset="sunset" /* environmentRotation={[0, Math.PI, 0]} optional */ />
+
+  {/* ✅ add lights */}
+  <ambientLight intensity={0.3} />
+  <directionalLight position={[-10, 100, 5]} intensity={1} color={0xFFE5B4 as any} />
+  <directionalLight position={[10, 100, 5]} intensity={1} color={0xFFE5B4 as any} />
           
           {/* Horse with platform */}
           <Float speed={1} rotationIntensity={0.3} floatIntensity={0.5}>
