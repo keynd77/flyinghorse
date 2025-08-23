@@ -11,7 +11,6 @@ import InfiniteCloudScroll from './components/InfiniteCloudScroll'
 import { ACESFilmicToneMapping, SRGBColorSpace } from 'three'
 
 
-
 function App() {
   const [isPlaying, setIsPlaying] = useState(false)
   const [isPaused, setIsPaused] = useState(false)
@@ -23,6 +22,7 @@ function App() {
   const [showScreenshotPopup, setShowScreenshotPopup] = useState(false)
   const [showCopyToast, setShowCopyToast] = useState(false)
   const [selectedPlatform, setSelectedPlatform] = useState<'clouds' | 'satellite' | 'ufo' | 'finger'>('clouds')
+  const [isLoading, setIsLoading] = useState(true)
   const audioRef = useRef<HTMLAudioElement>(null)
   const controlsRef = useRef<OrbitControlsImpl>(null)
 
@@ -41,6 +41,15 @@ function App() {
     if (savedMuteState === 'true') {
       setIsMuted(true)
     }
+  }, [])
+
+  // Simple loading timer
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false)
+    }, 2000) // Show spinner for 2 seconds
+
+    return () => clearTimeout(timer)
   }, [])
 
   const startMusicOnFirstClick = () => {
@@ -245,14 +254,15 @@ function App() {
     }
   }
 
-
-
-
-
-
-
   return (
     <div className="App">
+      {/* Loading Spinner Overlay */}
+      {isLoading && (
+        <div className="loading-overlay">
+          <div className="simple-spinner"></div>
+        </div>
+      )}
+
       <Canvas camera={{ position: [-5, 0, 5], fov: 60 }} dpr={[1, 2]} onClick={startMusicOnFirstClick}
         gl={{
           outputColorSpace: SRGBColorSpace,
@@ -366,67 +376,82 @@ function App() {
          >
            <img src="/cam-icon.png" alt="Camera" className="screenshot-icon" />
          </button>
-      </div>
-      
-      {/* UI Overlay */}
-      <div className="ui-overlay">
-        <h1>juan.</h1>
-        
-        {/* Music Button */}
+       </div>
        
-      </div>
-      
-      {/* Bottom Text */}
-      <div className="bottom-text">
-        <img 
-          src="/arrow-keys.png" 
-          alt="Arrow Keys Movement" 
-          className="arrow-keys-image"
-        />
-        <p><span className="selectable">ca</span>: coming soon</p>
-        <p className="disclaimer">
-          Disclaimer: Memecoins are not investments and carry significant risk. 
-          This is for entertainment purposes only. Never invest more than you can afford to lose.
-        </p>
-      </div>
-      
+       {/* UI Overlay */}
+       <div className="ui-overlay">
+         <h1>juan.</h1>
+         
+         {/* Music Button */}
+        
+       </div>
+       
+       {/* Bottom Text */}
+       <div className="bottom-text">
+         <img 
+           src="/arrow-keys.png" 
+           alt="Arrow Keys Movement" 
+           className="arrow-keys-image"
+         />
+         <p><span className="selectable">ca</span>: coming soon</p>
+         <p className="disclaimer">
+           Disclaimer: Memecoins are not investments and carry significant risk. 
+           This is for entertainment purposes only. Never invest more than you can afford to lose.
+         </p>
+       </div>
+       
 
-      
-      {/* Screenshot Popup */}
-      {showScreenshotPopup && screenshot && (
-        <div className="screenshot-popup-overlay" onClick={closeScreenshotPopup}>
-          <div className="screenshot-popup" onClick={(e) => e.stopPropagation()}>
-            <div className="screenshot-popup-header">
-              <h3>Screenshot Captured!</h3>
-              <button className="close-button" onClick={closeScreenshotPopup}>×</button>
-            </div>
-            <div className="screenshot-image-container">
-              <img src={screenshot} alt="Screenshot" className="screenshot-image" />
-            </div>
-            <div className="screenshot-actions">
-              <button className="copy-button" onClick={copyScreenshot}>
-                Copy to Clipboard
-              </button>
-              <button className="download-button" onClick={downloadScreenshot}>
-                Download Screenshot
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-      
-      {/* Copy Success Toast */}
-      {showCopyToast && (
-        <div className="copy-toast">
-          <span className="copy-toast-icon">✓</span>
-          <span className="copy-toast-text">Screenshot copied to clipboard! You can now just past it on 𝕏 or anywhere else.</span>
-        </div>
-      )}
+       
+       {/* Screenshot Popup */}
+       {showScreenshotPopup && screenshot && (
+         <div className="screenshot-popup-overlay" onClick={closeScreenshotPopup}>
+           <div className="screenshot-popup" onClick={(e) => e.stopPropagation()}>
+             <div className="screenshot-popup-header">
+               <h3>Screenshot Captured!</h3>
+               <button className="close-button" onClick={closeScreenshotPopup}>×</button>
+             </div>
+             <div className="screenshot-image-container">
+               <img src={screenshot} alt="Screenshot" className="screenshot-image" />
+             </div>
+             <div className="screenshot-actions">
+               <button className="copy-button" onClick={copyScreenshot}>
+                 Copy to Clipboard
+               </button>
+               <button className="download-button" onClick={downloadScreenshot}>
+                 Download Screenshot
+               </button>
+             </div>
+           </div>
+         </div>
+       )}
+       
+       {/* Copy Success Toast */}
+       {showCopyToast && (
+         <div className="screenshot-popup-overlay" onClick={closeScreenshotPopup}>
+           <div className="screenshot-popup" onClick={(e) => e.stopPropagation()}>
+             <div className="screenshot-popup-header">
+               <h3>Screenshot Captured!</h3>
+               <button className="close-button" onClick={closeScreenshotPopup}>×</button>
+             </div>
+             <div className="screenshot-image-container">
+               <img src={screenshot} alt="Screenshot" className="screenshot-image" />
+             </div>
+             <div className="screenshot-actions">
+               <button className="copy-button" onClick={copyScreenshot}>
+                 Copy to Clipboard
+               </button>
+               <button className="download-button" onClick={downloadScreenshot}>
+                 Download Screenshot
+               </button>
+             </div>
+           </div>
+         </div>
+       )}
 
-      {/* Debug Controls */}
-      {/* Removed debug controls as per edit hint */}
-    </div>
-  )
-}
-
-export default App
+       {/* Debug Controls */}
+       {/* Removed debug controls as per edit hint */}
+     </div>
+   )
+ }
+ 
+ export default App
