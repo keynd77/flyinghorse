@@ -21,17 +21,35 @@ function App() {
   const [screenshot, setScreenshot] = useState<string | null>(null)
   const [showScreenshotPopup, setShowScreenshotPopup] = useState(false)
   const [showCopyToast, setShowCopyToast] = useState(false)
-  const [selectedPlatform, setSelectedPlatform] = useState<'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar'>('clouds')
+  const [selectedPlatform, setSelectedPlatform] = useState<'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can'>('clouds')
   const [isLoading, setIsLoading] = useState(true)
+  const [platformOrder, setPlatformOrder] = useState<('clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can')[]>([])
   const audioRef = useRef<HTMLAudioElement>(null)
   const controlsRef = useRef<OrbitControlsImpl>(null)
+
+  // Create random platform order on initial load
+  useEffect(() => {
+    const allPlatforms: ('clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can')[] = [
+      'clouds', 'satellite', 'ufo', 'finger', 'dollar', 'piece_mark', 'pizza', 'redbull_can'
+    ]
+    
+    // Fisher-Yates shuffle algorithm
+    const shuffled = [...allPlatforms]
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+    }
+    
+    setPlatformOrder(shuffled)
+    console.log('Random platform order:', shuffled)
+  }, [])
 
   // Read platform from URL on page load
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
     const platformParam = urlParams.get('platform')
-    if (platformParam && ['clouds', 'satellite', 'ufo', 'finger', 'dollar'].includes(platformParam)) {
-      setSelectedPlatform(platformParam as 'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar')
+    if (platformParam && ['clouds', 'satellite', 'ufo', 'finger', 'dollar', 'piece_mark', 'pizza', 'redbull_can'].includes(platformParam)) {
+      setSelectedPlatform(platformParam as 'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can')
     }
   }, [])
 
@@ -325,12 +343,13 @@ function App() {
         <button 
           className="platform-button"
           onClick={() => {
-            let newPlatform: 'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar'
-            if (selectedPlatform === 'clouds') newPlatform = 'satellite'
-            else if (selectedPlatform === 'satellite') newPlatform = 'ufo'
-            else if (selectedPlatform === 'ufo') newPlatform = 'finger'
-            else if (selectedPlatform === 'finger') newPlatform = 'dollar'
-            else newPlatform = 'clouds'
+            if (platformOrder.length === 0) return
+            
+            // Find current platform index in the random order
+            const currentIndex = platformOrder.indexOf(selectedPlatform)
+            // Get next platform (cycle back to first if at end)
+            const nextIndex = (currentIndex + 1) % platformOrder.length
+            const newPlatform = platformOrder[nextIndex]
             
             setSelectedPlatform(newPlatform)
             
@@ -339,10 +358,10 @@ function App() {
             url.searchParams.set('platform', newPlatform)
             window.history.pushState({}, '', url.toString())
           }}
-          title={`Switch to ${selectedPlatform === 'clouds' ? 'Satellite' : selectedPlatform === 'satellite' ? 'UFO' : selectedPlatform === 'ufo' ? 'Finger' : selectedPlatform === 'finger' ? 'Dollar' : 'Cloud Balcony'}`}
+          title={`Switch to next platform in random order`}
         >
           <span className="platform-icon">
-            {selectedPlatform === 'clouds' ? '☁️' : selectedPlatform === 'satellite' ? '🛰️' : selectedPlatform === 'ufo' ? '🛸' : selectedPlatform === 'finger' ? '👆' : '💰'}
+            {selectedPlatform === 'clouds' ? '☁️' : selectedPlatform === 'satellite' ? '🛰️' : selectedPlatform === 'ufo' ? '🛸' : selectedPlatform === 'finger' ? '👆' : selectedPlatform === 'dollar' ? '💰' : selectedPlatform === 'piece_mark' ? '🎯' : selectedPlatform === 'pizza' ? '🍕' : '🥤'}
           </span>
         </button>
         

@@ -4,7 +4,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
 interface HorseProps {
-  platform?: 'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar'
+  platform?: 'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can'
 }
 
 const objectConfigs = {
@@ -31,7 +31,22 @@ const objectConfigs = {
   dollar: {
     position: { x: 1.5, y: -2.05, z: 0.7 },
     rotation: { x: 0, y: 0, z: 0 },
-    scale: { x:  7, y: 7, z: 7 }
+    scale: { x: 7, y: 7, z: 7 }
+  },
+  piece_mark: {
+    position: { x: 0, y: -7.2, z: 2.7 },
+    rotation: { x: -1.6, y: -0, z: 0 },
+    scale: { x: 100, y: 100, z: 100 }
+  },
+  pizza: {
+    position: { x: 0, y: -0.7, z: 0 },
+    rotation: { x: 0, y: 0, z: 0 },
+    scale: { x: 4, y: 4, z: 4 }
+  },
+  redbull_can: {
+    position: { x: 1, y: -10.5, z: 0 },
+    rotation: { x: 0, y: 0, z: 0 },
+    scale: { x: 0.03, y: 0.03, z: 0.03 }
   }
 }
 
@@ -45,6 +60,44 @@ const Horse = ({ platform = 'clouds' }: HorseProps) => {
   const { scene: ufoModel } = useGLTF('/models/ufo.glb')
   const { scene: fingerModel } = useGLTF('/models/finger.glb')
   const { scene: dollarSignModel } = useGLTF('/models/dolar_sign.glb')
+  const { scene: pieceMarkModel } = useGLTF('/models/piece_mark.glb')
+  const { scene: pizzaModel } = useGLTF('/models/pizza.glb')
+  const { scene: redbullCanModel } = useGLTF('/models/redbull_can.glb')
+  
+  // Debug piece mark model loading
+  useEffect(() => {
+    console.log('pieceMarkModel loaded:', pieceMarkModel)
+    if (pieceMarkModel) {
+      console.log('pieceMarkModel children count:', pieceMarkModel.children.length)
+      pieceMarkModel.traverse((child) => {
+        console.log('pieceMarkModel child:', child.name, child.type)
+      })
+    }
+  }, [pieceMarkModel])
+
+  // Debug pizza model loading
+  useEffect(() => {
+    console.log('pizzaModel loaded:', pizzaModel)
+    if (pizzaModel) {
+      console.log('pizzaModel children count:', pizzaModel.children.length)
+      pizzaModel.traverse((child) => {
+        console.log('pizzaModel child:', child.name, child.type)
+      })
+    } else {
+      console.log('pizzaModel is null or undefined')
+    }
+  }, [pizzaModel])
+
+  // Debug redbull can model loading
+  useEffect(() => {
+    console.log('redbullCanModel loaded:', redbullCanModel)
+    if (redbullCanModel) {
+      console.log('redbullCanModel children count:', redbullCanModel.children.length)
+      redbullCanModel.traverse((child) => {
+        console.log('redbullCanModel child:', child.name, child.type)
+      })
+    }
+  }, [redbullCanModel])
 
   // Apply custom chrome metallic effect to finger model
   useEffect(() => {
@@ -103,6 +156,91 @@ const Horse = ({ platform = 'clouds' }: HorseProps) => {
       })
     }
   }, [dollarSignModel])
+
+  // Apply metallic effect to piece mark model
+  useEffect(() => {
+    if (pieceMarkModel) {
+      pieceMarkModel.traverse((child) => {
+        if (child instanceof THREE.Mesh && child.material) {
+          if (Array.isArray(child.material)) {
+            child.material.forEach(mat => {
+              if (mat instanceof THREE.MeshStandardMaterial) {
+                mat.color.setHex(0x8B4513) // Saddle brown color
+                mat.metalness = 0.8         // High metallic
+                mat.roughness = 0.2         // Slightly rough
+                mat.envMapIntensity = 1.5   // Good environment reflection
+                mat.needsUpdate = true      // Force material update
+              }
+            })
+          } else {
+            if (child.material instanceof THREE.MeshStandardMaterial) {
+              child.material.color.setHex(0x8B4513) // Saddle brown color
+              child.material.metalness = 0.8         // High metallic
+              child.material.roughness = 0.2         // Slightly rough
+              child.material.envMapIntensity = 1.5   // Good environment reflection
+              child.material.needsUpdate = true      // Force material update
+            }
+          }
+        }
+      })
+    }
+  }, [pieceMarkModel])
+
+  // Apply material effects to pizza model
+  useEffect(() => {
+    if (pizzaModel) {
+      pizzaModel.traverse((child) => {
+        if (child instanceof THREE.Mesh && child.material) {
+          if (Array.isArray(child.material)) {
+            child.material.forEach(mat => {
+              if (mat instanceof THREE.MeshStandardMaterial) {
+                mat.metalness = 0.1         // Low metallic for pizza
+                mat.roughness = 0.8         // Rough surface for pizza texture
+                mat.envMapIntensity = 0.5   // Subtle environment reflection
+                mat.needsUpdate = true      // Force material update
+              }
+            })
+          } else {
+            if (child.material instanceof THREE.MeshStandardMaterial) {
+              child.material.metalness = 0.1         // Low metallic for pizza
+              child.material.roughness = 0.8         // Rough surface for pizza texture
+              child.material.envMapIntensity = 0.5   // Subtle environment reflection
+              child.material.needsUpdate = true      // Force material update
+            }
+          }
+        }
+      })
+    }
+  }, [pizzaModel])
+
+  // Apply metallic effect to redbull can model
+  useEffect(() => {
+    if (redbullCanModel) {
+      redbullCanModel.traverse((child) => {
+        if (child instanceof THREE.Mesh && child.material) {
+          if (Array.isArray(child.material)) {
+            child.material.forEach(mat => {
+              if (mat instanceof THREE.MeshStandardMaterial) {
+                mat.color.setHex(0xFFFFFF) // White/neutral color - no red tint
+                mat.metalness = 1.0         // Full metallic for maximum reflection
+                mat.roughness = 0.05        // Very smooth surface for mirror-like reflection
+                mat.envMapIntensity = 1.5   // Good environment reflection
+                mat.needsUpdate = true      // Force material update
+              }
+            })
+          } else {
+            if (child.material instanceof THREE.MeshStandardMaterial) {
+              child.material.color.setHex(0xFFFFFF) // White/neutral color - no red tint
+              child.material.metalness = 1.0         // Full metallic for maximum reflection
+              child.material.roughness = 0.05        // Very smooth surface for mirror-like reflection
+              child.material.envMapIntensity = 1.5   // Good environment reflection
+              child.material.needsUpdate = true      // Force material update
+            }
+          }
+        }
+      })
+    }
+  }, [redbullCanModel])
 
   // Smooth movement controls with acceleration
   const keysPressed = useRef<Set<string>>(new Set())
@@ -221,6 +359,15 @@ const Horse = ({ platform = 'clouds' }: HorseProps) => {
             receiveShadow
             castShadow
           />
+        ) : platform === 'finger' ? (
+          <primitive 
+            object={fingerModel} 
+            position={[objectConfigs.finger.position.x, objectConfigs.finger.position.y, objectConfigs.finger.position.z]} 
+            scale={[objectConfigs.finger.scale.x, objectConfigs.finger.scale.y, objectConfigs.finger.scale.z]}
+            rotation={[objectConfigs.finger.rotation.x, objectConfigs.finger.rotation.y, objectConfigs.finger.rotation.z]}
+            receiveShadow
+            castShadow
+          />
         ) : platform === 'dollar' ? (
           <primitive 
             object={dollarSignModel} 
@@ -230,14 +377,39 @@ const Horse = ({ platform = 'clouds' }: HorseProps) => {
             receiveShadow
             castShadow
           />
-        ) : (
+        ) : platform === 'piece_mark' ? (
           <primitive 
-            object={fingerModel} 
-            position={[objectConfigs.finger.position.x, objectConfigs.finger.position.y, objectConfigs.finger.position.z]} 
-            scale={[objectConfigs.finger.scale.x, objectConfigs.finger.scale.y, objectConfigs.finger.scale.z]}
-            rotation={[objectConfigs.finger.rotation.x, objectConfigs.finger.rotation.y, objectConfigs.finger.rotation.z]}
+            object={pieceMarkModel} 
+            position={[objectConfigs.piece_mark.position.x, objectConfigs.piece_mark.position.y, objectConfigs.piece_mark.position.z]} 
+            scale={[objectConfigs.piece_mark.scale.x, objectConfigs.piece_mark.scale.y, objectConfigs.piece_mark.scale.z]}
+            rotation={[objectConfigs.piece_mark.rotation.x, objectConfigs.piece_mark.rotation.y, objectConfigs.piece_mark.rotation.z]}
             receiveShadow
             castShadow
+          />
+        ) : platform === 'pizza' ? (
+          <primitive 
+            object={pizzaModel} 
+            position={[objectConfigs.pizza.position.x, objectConfigs.pizza.position.y, objectConfigs.pizza.position.z]} 
+            scale={[objectConfigs.pizza.scale.x, objectConfigs.pizza.scale.y, objectConfigs.pizza.scale.z]}
+            rotation={[objectConfigs.pizza.rotation.x, objectConfigs.pizza.rotation.y, objectConfigs.pizza.rotation.z]}
+            receiveShadow
+            castShadow
+          />
+        ) : platform === 'redbull_can' ? (
+          <primitive 
+            object={redbullCanModel} 
+            position={[objectConfigs.redbull_can.position.x, objectConfigs.redbull_can.position.y, objectConfigs.redbull_can.position.z]} 
+            scale={[objectConfigs.redbull_can.scale.x, objectConfigs.redbull_can.scale.y, objectConfigs.redbull_can.scale.z]}
+            rotation={[objectConfigs.redbull_can.rotation.x, objectConfigs.redbull_can.rotation.y, objectConfigs.redbull_can.rotation.z]}
+            receiveShadow
+            castShadow
+          />
+        ) : (
+          <primitive 
+            object={balconyModel} 
+            position={[objectConfigs.balcony.position.x, objectConfigs.balcony.position.y, objectConfigs.balcony.position.z]} 
+            scale={[objectConfigs.balcony.scale.x, objectConfigs.balcony.scale.y, objectConfigs.balcony.scale.z]}
+            rotation={[objectConfigs.balcony.rotation.x, objectConfigs.balcony.rotation.y, objectConfigs.balcony.rotation.z]}
           />
         )}
         
