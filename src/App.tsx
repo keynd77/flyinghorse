@@ -22,8 +22,18 @@ function App() {
   const [screenshot, setScreenshot] = useState<string | null>(null)
   const [showScreenshotPopup, setShowScreenshotPopup] = useState(false)
   const [showCopyToast, setShowCopyToast] = useState(false)
+  const [selectedPlatform, setSelectedPlatform] = useState<'clouds' | 'satellite' | 'ufo' | 'finger'>('clouds')
   const audioRef = useRef<HTMLAudioElement>(null)
   const controlsRef = useRef<OrbitControlsImpl>(null)
+
+  // Read platform from URL on page load
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const platformParam = urlParams.get('platform')
+    if (platformParam && ['clouds', 'satellite', 'ufo', 'finger'].includes(platformParam)) {
+      setSelectedPlatform(platformParam as 'clouds' | 'satellite' | 'ufo' | 'finger')
+    }
+  }, [])
 
   useEffect(() => {
     // Check localStorage for mute state
@@ -254,29 +264,16 @@ function App() {
         >
         <Suspense fallback={null}>
           {/* Sky and lighting */}
-          <Sky />
-          <Environment preset="sunset" environmentRotation={[0, Math.PI, 0]} />
-          <ambientLight intensity={0.3} />
-          {/* Left side lighting */}
-          <directionalLight position={[-10, 100, 5]} intensity={1} color={0xFFE5B4} />
-          {/* Right side lighting */}
-          <directionalLight position={[10, 100, 5]} intensity={1} color={0xFFE5B4} />
+          <Sky sunPosition={[100, 20, 100]} />
+          <Environment preset="sunset" />
           
-          {/* Clouds */}
-          <CloudScene />
-          
-          
-          {/* Horse with Halo - Floating Effect */}
-          <Float
-            speed={1} 
-            rotationIntensity={0.2} 
-            floatIntensity={2}
-            floatingRange={[-0.2, 0.2]}
-          >
-            <Horse />
+          {/* Horse with platform */}
+          <Float speed={1} rotationIntensity={0.3} floatIntensity={0.5}>
+            <Horse platform={selectedPlatform} />
           </Float>
           
-
+          {/* Clouds - always visible */}
+          <CloudScene />
           
           {/* Controls */}
           <OrbitControls 
@@ -318,7 +315,31 @@ function App() {
           </span>
         </button>
         
-                 {/* Twitter Button */}
+        {/* Platform Selection Button */}
+        <button 
+          className="platform-button"
+          onClick={() => {
+            let newPlatform: 'clouds' | 'satellite' | 'ufo' | 'finger'
+            if (selectedPlatform === 'clouds') newPlatform = 'satellite'
+            else if (selectedPlatform === 'satellite') newPlatform = 'ufo'
+            else if (selectedPlatform === 'ufo') newPlatform = 'finger'
+            else newPlatform = 'clouds'
+            
+            setSelectedPlatform(newPlatform)
+            
+            // Update URL with platform parameter
+            const url = new URL(window.location.href)
+            url.searchParams.set('platform', newPlatform)
+            window.history.pushState({}, '', url.toString())
+          }}
+          title={`Switch to ${selectedPlatform === 'clouds' ? 'Satellite' : selectedPlatform === 'satellite' ? 'UFO' : selectedPlatform === 'ufo' ? 'Finger' : 'Cloud Balcony'}`}
+        >
+          <span className="platform-icon">
+            {selectedPlatform === 'clouds' ? '☁️' : selectedPlatform === 'satellite' ? '🛰️' : selectedPlatform === 'ufo' ? '🛸' : '👆'}
+          </span>
+        </button>
+        
+        {/* Twitter Button */}
          <a 
            href="https://x.com/i/communities/1959007545399681337" 
            target="_blank" 
@@ -397,6 +418,8 @@ function App() {
         </div>
       )}
 
+      {/* Debug Controls */}
+      {/* Removed debug controls as per edit hint */}
     </div>
   )
 }
