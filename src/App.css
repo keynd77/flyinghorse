@@ -24,6 +24,7 @@
   flex-direction: column;
   align-items: center;
   gap: 15px;
+  width: 50px;
 }
 
 .ui-overlay h1 {
@@ -311,6 +312,7 @@ canvas {
   text-decoration: none;
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
+  margin: 0;
 }
 
 .twitter-button:hover {
@@ -356,6 +358,7 @@ canvas {
   justify-content: center;
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
+  margin: 0;
 }
 
 .screenshot-button:hover {
@@ -569,7 +572,7 @@ canvas {
   cursor: pointer;
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
-  margin-left: 15px;
+  margin: 0;
 }
 
 .platform-button:hover {
