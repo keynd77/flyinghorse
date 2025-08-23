@@ -21,7 +21,7 @@ function App() {
   const [screenshot, setScreenshot] = useState<string | null>(null)
   const [showScreenshotPopup, setShowScreenshotPopup] = useState(false)
   const [showCopyToast, setShowCopyToast] = useState(false)
-  const [selectedPlatform, setSelectedPlatform] = useState<'clouds' | 'satellite' | 'ufo' | 'finger'>('clouds')
+  const [selectedPlatform, setSelectedPlatform] = useState<'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar'>('clouds')
   const [isLoading, setIsLoading] = useState(true)
   const audioRef = useRef<HTMLAudioElement>(null)
   const controlsRef = useRef<OrbitControlsImpl>(null)
@@ -30,8 +30,8 @@ function App() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
     const platformParam = urlParams.get('platform')
-    if (platformParam && ['clouds', 'satellite', 'ufo', 'finger'].includes(platformParam)) {
-      setSelectedPlatform(platformParam as 'clouds' | 'satellite' | 'ufo' | 'finger')
+    if (platformParam && ['clouds', 'satellite', 'ufo', 'finger', 'dollar'].includes(platformParam)) {
+      setSelectedPlatform(platformParam as 'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar')
     }
   }, [])
 
@@ -137,15 +137,6 @@ function App() {
       const zoomIn = () => {
         const elapsed = Date.now() - startTime
         const progress = Math.min(elapsed / zoomInDuration, 1)
-        
-        if (controlsRef.current) {
-          const currentDistance = controlsRef.current.getDistance()
-          const targetDistance = 5 // close distance
-          const newDistance = currentDistance + (targetDistance - currentDistance) * 0.02
-          
-          // Use the correct zoom method
-          controlsRef.current.object.position.z = newDistance
-        }
         
         if (progress < 1) {
           requestAnimationFrame(zoomIn)
@@ -334,10 +325,11 @@ function App() {
         <button 
           className="platform-button"
           onClick={() => {
-            let newPlatform: 'clouds' | 'satellite' | 'ufo' | 'finger'
+            let newPlatform: 'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar'
             if (selectedPlatform === 'clouds') newPlatform = 'satellite'
             else if (selectedPlatform === 'satellite') newPlatform = 'ufo'
             else if (selectedPlatform === 'ufo') newPlatform = 'finger'
+            else if (selectedPlatform === 'finger') newPlatform = 'dollar'
             else newPlatform = 'clouds'
             
             setSelectedPlatform(newPlatform)
@@ -347,10 +339,10 @@ function App() {
             url.searchParams.set('platform', newPlatform)
             window.history.pushState({}, '', url.toString())
           }}
-          title={`Switch to ${selectedPlatform === 'clouds' ? 'Satellite' : selectedPlatform === 'satellite' ? 'UFO' : selectedPlatform === 'ufo' ? 'Finger' : 'Cloud Balcony'}`}
+          title={`Switch to ${selectedPlatform === 'clouds' ? 'Satellite' : selectedPlatform === 'satellite' ? 'UFO' : selectedPlatform === 'ufo' ? 'Finger' : selectedPlatform === 'finger' ? 'Dollar' : 'Cloud Balcony'}`}
         >
           <span className="platform-icon">
-            {selectedPlatform === 'clouds' ? '☁️' : selectedPlatform === 'satellite' ? '🛰️' : selectedPlatform === 'ufo' ? '🛸' : '👆'}
+            {selectedPlatform === 'clouds' ? '☁️' : selectedPlatform === 'satellite' ? '🛰️' : selectedPlatform === 'ufo' ? '🛸' : selectedPlatform === 'finger' ? '👆' : '💰'}
           </span>
         </button>
         
@@ -427,24 +419,9 @@ function App() {
        
        {/* Copy Success Toast */}
        {showCopyToast && (
-         <div className="screenshot-popup-overlay" onClick={closeScreenshotPopup}>
-           <div className="screenshot-popup" onClick={(e) => e.stopPropagation()}>
-             <div className="screenshot-popup-header">
-               <h3>Screenshot Captured!</h3>
-               <button className="close-button" onClick={closeScreenshotPopup}>×</button>
-             </div>
-             <div className="screenshot-image-container">
-               <img src={screenshot} alt="Screenshot" className="screenshot-image" />
-             </div>
-             <div className="screenshot-actions">
-               <button className="copy-button" onClick={copyScreenshot}>
-                 Copy to Clipboard
-               </button>
-               <button className="download-button" onClick={downloadScreenshot}>
-                 Download Screenshot
-               </button>
-             </div>
-           </div>
+         <div className="copy-toast">
+           <span className="copy-toast-icon">✓</span>
+           <span className="copy-toast-text">Screenshot copied to clipboard! You can now just past it on 𝕏 or anywhere else.</span>
          </div>
        )}
 

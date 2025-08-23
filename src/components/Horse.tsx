@@ -4,7 +4,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
 interface HorseProps {
-  platform?: 'clouds' | 'satellite' | 'ufo' | 'finger'
+  platform?: 'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar'
 }
 
 const objectConfigs = {
@@ -27,6 +27,11 @@ const objectConfigs = {
     position: { x: -3.2, y: -26.32, z: -7 },
     rotation: { x: 0.005, y: 3.3, z: 1.5 },
     scale: { x: 35, y: 35, z: 35 }
+  },
+  dollar: {
+    position: { x: 1.5, y: -2.05, z: 0.7 },
+    rotation: { x: 0, y: 0, z: 0 },
+    scale: { x:  7, y: 7, z: 7 }
   }
 }
 
@@ -39,6 +44,7 @@ const Horse = ({ platform = 'clouds' }: HorseProps) => {
   const { scene: satelliteModel } = useGLTF('/models/space_satellite.glb')
   const { scene: ufoModel } = useGLTF('/models/ufo.glb')
   const { scene: fingerModel } = useGLTF('/models/finger.glb')
+  const { scene: dollarSignModel } = useGLTF('/models/dolar_sign.glb')
 
   // Apply custom chrome metallic effect to finger model
   useEffect(() => {
@@ -68,6 +74,35 @@ const Horse = ({ platform = 'clouds' }: HorseProps) => {
       })
     }
   }, [fingerModel])
+
+  // Apply golden metallic effect to dollar sign model
+  useEffect(() => {
+    if (dollarSignModel) {
+      dollarSignModel.traverse((child) => {
+        if (child instanceof THREE.Mesh && child.material) {
+          if (Array.isArray(child.material)) {
+            child.material.forEach(mat => {
+              if (mat instanceof THREE.MeshStandardMaterial) {
+                mat.color.setHex(0xFFD700) // Golden color
+                mat.metalness = 1.0         // Full metallic
+                mat.roughness = 0.1         // Smooth but not mirror-like
+                mat.envMapIntensity = 2.0   // Strong environment reflection
+                mat.needsUpdate = true      // Force material update
+              }
+            })
+          } else {
+            if (child.material instanceof THREE.MeshStandardMaterial) {
+              child.material.color.setHex(0xFFD700) // Golden color
+              child.material.metalness = 1.0         // Full metallic
+              child.material.roughness = 0.1         // Smooth but not mirror-like
+              child.material.envMapIntensity = 2.0   // Strong environment reflection
+              child.material.needsUpdate = true      // Force material update
+            }
+          }
+        }
+      })
+    }
+  }, [dollarSignModel])
 
   // Smooth movement controls with acceleration
   const keysPressed = useRef<Set<string>>(new Set())
@@ -183,6 +218,15 @@ const Horse = ({ platform = 'clouds' }: HorseProps) => {
             position={[objectConfigs.ufo.position.x, objectConfigs.ufo.position.y, objectConfigs.ufo.position.z]} 
             scale={[objectConfigs.ufo.scale.x, objectConfigs.ufo.scale.y, objectConfigs.ufo.scale.z]}
             rotation={[objectConfigs.ufo.rotation.x, objectConfigs.ufo.rotation.y, objectConfigs.ufo.rotation.z]}
+            receiveShadow
+            castShadow
+          />
+        ) : platform === 'dollar' ? (
+          <primitive 
+            object={dollarSignModel} 
+            position={[objectConfigs.dollar.position.x, objectConfigs.dollar.position.y, objectConfigs.dollar.position.z]} 
+            scale={[objectConfigs.dollar.scale.x, objectConfigs.dollar.scale.y, objectConfigs.dollar.scale.z]}
+            rotation={[objectConfigs.dollar.rotation.x, objectConfigs.dollar.rotation.y, objectConfigs.dollar.rotation.z]}
             receiveShadow
             castShadow
           />
