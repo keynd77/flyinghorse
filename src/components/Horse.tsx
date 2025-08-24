@@ -4,7 +4,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
 interface HorseProps {
-  platform?: 'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can'
+  platform?: 'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question_mark_block_super_mario_bros'
 }
 
 const objectConfigs = {
@@ -47,7 +47,16 @@ const objectConfigs = {
     position: { x: 1, y: -10.5, z: 0 },
     rotation: { x: 0, y: 0, z: 0 },
     scale: { x: 0.03, y: 0.03, z: 0.03 }
-  }
+  },
+  skull: {
+    position: { x: 0.5, y: -9.38, z: 2 },
+    rotation: { x: -0.02, y: -0.1, z: 0 },
+    scale: { x: 1.3, y: 1.3, z: 1.3 }
+  },
+  question_mark_block_super_mario_bros: {
+    position: { x: 0, y: -4.5, z: 0 },
+    rotation: { x: 0, y: 0, z: 0 },
+    scale: { x: 0.005, y: 0.005, z: 0.005 }  }
 }
 
 const Horse = ({ platform = 'clouds' }: HorseProps) => {
@@ -63,6 +72,28 @@ const Horse = ({ platform = 'clouds' }: HorseProps) => {
   const { scene: pieceMarkModel } = useGLTF('/models/piece_mark.glb')
   const { scene: pizzaModel } = useGLTF('/models/pizza.glb')
   const { scene: redbullCanModel } = useGLTF('/models/redbull_can.glb')
+  const { scene: skullModel } = useGLTF('/models/skull.glb')
+  const { scene: questionMarkBlockModel } = useGLTF('/models/question_mark_block_super_mario_bros.glb')
+  
+  // Apply chrome effect to skull model
+  useEffect(() => {
+    if (skullModel) {
+      skullModel.traverse((child) => {
+        if (child instanceof THREE.Mesh) {
+          // Create chrome material that looks like metal, not glass
+          const chromeMaterial = new THREE.MeshStandardMaterial({
+            color: 0xCCCCCC,
+            metalness: 0.9,
+            roughness: 0.1,
+            envMapIntensity: 0.8,
+            transparent: false,
+            opacity: 1.0
+          })
+          child.material = chromeMaterial
+        }
+      })
+    }
+  }, [skullModel])
   
   // Debug piece mark model loading
   useEffect(() => {
@@ -392,6 +423,24 @@ const Horse = ({ platform = 'clouds' }: HorseProps) => {
             position={[objectConfigs.pizza.position.x, objectConfigs.pizza.position.y, objectConfigs.pizza.position.z]} 
             scale={[objectConfigs.pizza.scale.x, objectConfigs.pizza.scale.y, objectConfigs.pizza.scale.z]}
             rotation={[objectConfigs.pizza.rotation.x, objectConfigs.pizza.rotation.y, objectConfigs.pizza.rotation.z]}
+            receiveShadow
+            castShadow
+          />
+        ) : platform === 'skull' ? (
+          <primitive 
+            object={skullModel} 
+            position={[objectConfigs.skull.position.x, objectConfigs.skull.position.y, objectConfigs.skull.position.z]} 
+            scale={[objectConfigs.skull.scale.x, objectConfigs.skull.scale.y, objectConfigs.skull.scale.z]}
+            rotation={[objectConfigs.skull.rotation.x, objectConfigs.skull.rotation.y, objectConfigs.skull.rotation.z]}
+            receiveShadow
+            castShadow
+          />
+        ) : platform === 'question_mark_block_super_mario_bros' ? (
+          <primitive 
+            object={questionMarkBlockModel} 
+            position={[objectConfigs.question_mark_block_super_mario_bros.position.x, objectConfigs.question_mark_block_super_mario_bros.position.y, objectConfigs.question_mark_block_super_mario_bros.position.z]} 
+            scale={[objectConfigs.question_mark_block_super_mario_bros.scale.x, objectConfigs.question_mark_block_super_mario_bros.scale.y, objectConfigs.question_mark_block_super_mario_bros.scale.z]}
+            rotation={[objectConfigs.question_mark_block_super_mario_bros.rotation.x, objectConfigs.question_mark_block_super_mario_bros.rotation.y, objectConfigs.question_mark_block_super_mario_bros.rotation.z]}
             receiveShadow
             castShadow
           />

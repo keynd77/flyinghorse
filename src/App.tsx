@@ -22,9 +22,9 @@ function App() {
   const [screenshot, setScreenshot] = useState<string | null>(null)
   const [showScreenshotPopup, setShowScreenshotPopup] = useState(false)
   const [showCopyToast, setShowCopyToast] = useState(false)
-  const [selectedPlatform, setSelectedPlatform] = useState<'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can'>('clouds')
+  const [selectedPlatform, setSelectedPlatform] = useState<'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question_mark_block_super_mario_bros'>('clouds')
   const [isLoading, setIsLoading] = useState(true)
-  const [platformOrder, setPlatformOrder] = useState<('clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can')[]>([])
+  const [platformOrder, setPlatformOrder] = useState<('clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question_mark_block_super_mario_bros')[]>([])
   const [showImageGallery, setShowImageGallery] = useState(false)
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [showAlert, setShowAlert] = useState(true)
@@ -33,8 +33,8 @@ function App() {
 
   // Create random platform order on initial load
   useEffect(() => {
-    const allPlatforms: ('clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can')[] = [
-      'clouds', 'satellite', 'ufo', 'finger', 'dollar', 'piece_mark', 'pizza', 'redbull_can'
+    const allPlatforms: ('clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question_mark_block_super_mario_bros')[] = [
+      'clouds', 'satellite', 'ufo', 'finger', 'dollar', 'piece_mark', 'pizza', 'redbull_can', 'skull', 'question_mark_block_super_mario_bros'
     ]
     
     // Fisher-Yates shuffle algorithm
@@ -52,8 +52,8 @@ function App() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
     const platformParam = urlParams.get('platform')
-    if (platformParam && ['clouds', 'satellite', 'ufo', 'finger', 'dollar', 'piece_mark', 'pizza', 'redbull_can'].includes(platformParam)) {
-      setSelectedPlatform(platformParam as 'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can')
+    if (platformParam && ['clouds', 'satellite', 'ufo', 'finger', 'dollar', 'piece_mark', 'pizza', 'redbull_can', 'skull', 'question_mark_block_super_mario_bros'].includes(platformParam)) {
+      setSelectedPlatform(platformParam as 'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question_mark_block_super_mario_bros')
     }
   }, [])
 
@@ -300,7 +300,7 @@ function App() {
         <Suspense fallback={null}>
   {/* Sky and lighting */}
   <Sky sunPosition={[100, 20, 100]} />
-  <Environment preset="sunset" /* environmentRotation={[0, Math.PI, 0]} optional */ />
+            <Environment preset="sunset" />
 
   {/* ✅ add lights */}
   <ambientLight intensity={0.3} />
@@ -478,7 +478,7 @@ function App() {
           title={`Switch to next platform in random order`}
         >
           <span className="platform-icon">
-            {selectedPlatform === 'clouds' ? '☁️' : selectedPlatform === 'satellite' ? '🛰️' : selectedPlatform === 'ufo' ? '🛸' : selectedPlatform === 'finger' ? '👆' : selectedPlatform === 'dollar' ? '💰' : selectedPlatform === 'piece_mark' ? '🎯' : selectedPlatform === 'pizza' ? '🍕' : '🥤'}
+            {selectedPlatform === 'clouds' ? '☁️' : selectedPlatform === 'satellite' ? '🛰️' : selectedPlatform === 'ufo' ? '🛸' : selectedPlatform === 'finger' ? '👆' : selectedPlatform === 'dollar' ? '💰' : selectedPlatform === 'piece_mark' ? '🎯' : selectedPlatform === 'pizza' ? '🍕' : selectedPlatform === 'redbull_can' ? '🥤' : selectedPlatform === 'skull' ? '💀' : '❓'}
           </span>
         </button>
         
