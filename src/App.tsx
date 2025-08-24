@@ -27,6 +27,12 @@ function App() {
   const [platformOrder, setPlatformOrder] = useState<('clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can')[]>([])
   const [showImageGallery, setShowImageGallery] = useState(false)
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
+  const [showAlert, setShowAlert] = useState(() => {
+    // Always show alert on page reload/fresh visit
+    // Check if user has dismissed it in this session
+    const sessionDismissed = sessionStorage.getItem('alertDismissed')
+    return sessionDismissed !== 'true'
+  })
   const audioRef = useRef<HTMLAudioElement>(null)
   const controlsRef = useRef<OrbitControlsImpl>(null)
 
@@ -414,6 +420,25 @@ function App() {
         </div>
       )}
       
+      {/* Alert Message - Top Center */}
+      {showAlert && (
+        <div className="alert-message">
+          <button 
+            className="alert-close-btn"
+            onClick={() => {
+              setShowAlert(false)
+              sessionStorage.setItem('alertDismissed', 'true')
+            }}
+            title="Close message"
+          >
+            ×
+          </button>
+          <div className="alert-content">
+            unfortunately our X account is suspended. we are working on getting it back. the x community is still up <a href="https://x.com/i/communities/1959007545399681337" target="_blank" rel="noopener noreferrer">here</a>
+          </div>
+        </div>
+      )}
+      
       {/* Audio Element */}
       <audio ref={audioRef} src="/juan-track.mp3" loop />
       
@@ -462,13 +487,13 @@ function App() {
           </span>
         </button>
         
-        {/* Twitter Button */}
+                 {/* X Community Button */}
          <a 
            href="https://x.com/i/communities/1959007545399681337" 
            target="_blank" 
            rel="noopener noreferrer"
            className="twitter-button"
-           title="Follow us on Twitter"
+           title="Join our X Community"
          >
            <span className="twitter-icon">𝕏</span>
          </a>

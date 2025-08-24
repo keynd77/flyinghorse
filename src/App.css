@@ -405,6 +405,78 @@ canvas {
   filter: brightness(0) invert(1); /* Make icon white */
 }
 
+/* Alert Message */
+.alert-message {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1001;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(255, 230, 204, 0.6);
+  border: 2px solid #ff8c00;
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  max-width: 400px;
+  width: 90%;
+  position: fixed;
+}
+
+.alert-content {
+  color: black;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.alert-content a {
+  color: black;
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.alert-content a:hover {
+  color: #333;
+  text-decoration: none;
+}
+
+/* Close Button */
+.alert-close-btn {
+  position: absolute;
+  top: 4px;
+  right: 5px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #ff8c00;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.alert-close-btn:hover {
+  background-color: rgba(255, 140, 0, 0.1);
+  color: #e67e00;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .alert-message {
+    width: 90%;
+    max-width: none;
+    margin: 0 20px;
+  }
+}
+
 /* Gallery Button */
 .gallery-button {
   width: 50px;
