@@ -27,12 +27,7 @@ function App() {
   const [platformOrder, setPlatformOrder] = useState<('clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can')[]>([])
   const [showImageGallery, setShowImageGallery] = useState(false)
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
-  const [showAlert, setShowAlert] = useState(() => {
-    // Always show alert on page reload/fresh visit
-    // Check if user has dismissed it in this session
-    const sessionDismissed = sessionStorage.getItem('alertDismissed')
-    return sessionDismissed !== 'true'
-  })
+  const [showAlert, setShowAlert] = useState(true)
   const audioRef = useRef<HTMLAudioElement>(null)
   const controlsRef = useRef<OrbitControlsImpl>(null)
 
@@ -422,7 +417,7 @@ function App() {
       
       {/* Alert Message - Top Center */}
       {showAlert && (
-        <div className="alert-message">
+        <div className="alert-message" >
           <button 
             className="alert-close-btn"
             onClick={() => {
