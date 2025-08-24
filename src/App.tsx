@@ -483,15 +483,15 @@ function App() {
         </button>
         
                  {/* X Community Button */}
-         <a 
-           href="https://x.com/juanonheaven1" 
-           target="_blank" 
-           rel="noopener noreferrer"
-           className="twitter-button"
-           title="Join our X Community"
-         >
-           <span className="twitter-icon">𝕏</span>
-         </a>
+                   <a
+            href="https://x.com/juanonheaven1"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="twitter-button"
+            title="Join our X Community"
+          >
+            <span className="twitter-icon">𝕏</span>
+          </a>
          
          {/* Screenshot Button */}
          <button 
@@ -515,6 +515,17 @@ function App() {
          >
            <img src="/image-icon.png" alt="Image Gallery" className="gallery-icon" />
          </button>
+         
+         {/* Meme Maker Button */}
+         <a
+           href="https://juan-meme-maker-tan.vercel.app/"
+           target="_blank"
+           rel="noopener noreferrer"
+           className="meme-maker-button"
+           title="Create Juan Memes"
+         >
+           <img src="/editor-icon.png" alt="Meme Maker" className="meme-maker-icon" />
+         </a>
        </div>
        
        {/* UI Overlay */}
