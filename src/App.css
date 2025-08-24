@@ -405,6 +405,33 @@ canvas {
   filter: brightness(0) invert(1); /* Make icon white */
 }
 
+/* Gallery Button */
+.gallery-button {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  margin: 0;
+  margin-left: 15px;
+}
+
+.gallery-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.gallery-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
 /* Screenshot Popup */
 .screenshot-popup-overlay {
   position: fixed;

@@ -3,6 +3,7 @@ import { Sky, OrbitControls, Environment, Float } from '@react-three/drei'
 import { Suspense, useState, useRef, useEffect } from 'react'
 import Horse from './components/Horse'
 import CloudScene from './components/Clouds'
+import ImageGallery from './components/ImageGallery'
 import './App.css'
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
 import InfiniteCloudScroll from './components/InfiniteCloudScroll'
@@ -24,6 +25,8 @@ function App() {
   const [selectedPlatform, setSelectedPlatform] = useState<'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can'>('clouds')
   const [isLoading, setIsLoading] = useState(true)
   const [platformOrder, setPlatformOrder] = useState<('clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can')[]>([])
+  const [showImageGallery, setShowImageGallery] = useState(false)
+  const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const audioRef = useRef<HTMLAudioElement>(null)
   const controlsRef = useRef<OrbitControlsImpl>(null)
 
@@ -69,6 +72,18 @@ function App() {
 
     return () => clearTimeout(timer)
   }, [])
+
+  // ESC key handler for closing lightbox
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && selectedImage) {
+        setSelectedImage(null)
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [selectedImage])
 
   const startMusicOnFirstClick = () => {
     if (!hasInteracted && !isMuted && audioRef.current) {
@@ -299,6 +314,9 @@ function App() {
           {/* Clouds - always visible */}
           <CloudScene />
           
+          {/* Image Gallery in Sky */}
+          {showImageGallery && <ImageGallery onImageSelect={setSelectedImage} />}
+          
           {/* Controls */}
           <OrbitControls 
             ref={controlsRef}
@@ -315,7 +333,86 @@ function App() {
         </Suspense>
       </Canvas>
       
+      {/* Lightbox Overlay */}
+      {selectedImage && (
+        <div 
+                      style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '100vw',
+              height: '100vh',
+              backgroundColor: 'rgba(0, 0, 0, 0.9)',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              zIndex: 9999,
+              cursor: 'pointer'
+            }}
+          onClick={() => setSelectedImage(null)}
 
+        >
+          <img 
+            src={selectedImage} 
+            alt="Selected meme"
+            style={{
+              maxWidth: '90vw',
+              maxHeight: '90vh',
+              objectFit: 'contain',
+              border: '2px solid white',
+              borderRadius: '8px'
+            }}
+          />
+          <div style={{
+            position: 'absolute',
+            top: '20px',
+            right: '20px',
+            color: 'white',
+            fontSize: '24px',
+            cursor: 'pointer'
+          }}>
+            ✕
+          </div>
+          
+          {/* Save Button */}
+          <button
+            style={{
+              position: 'absolute',
+              top: '20px',
+              right: '60px',
+              background: 'rgba(255, 255, 255, 0.2)',
+              border: '1px solid white',
+              color: 'white',
+              padding: '8px 12px',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '14px'
+            }}
+            onClick={(e) => {
+              e.stopPropagation()
+              const link = document.createElement('a')
+              link.href = selectedImage
+              link.download = `juan-meme-${Date.now()}.png`
+              document.body.appendChild(link)
+              link.click()
+              document.body.removeChild(link)
+            }}
+          >
+            💾 Save
+          </button>
+          <div style={{
+            position: 'absolute',
+            bottom: '20px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            color: 'white',
+            fontSize: '14px',
+            textAlign: 'center'
+          }}>
+            Click to close • ESC key • Right-click for options
+          </div>
+        </div>
+      )}
       
       {/* Audio Element */}
       <audio ref={audioRef} src="/juan-track.mp3" loop />
@@ -386,6 +483,17 @@ function App() {
            }}
          >
            <img src="/cam-icon.png" alt="Camera" className="screenshot-icon" />
+         </button>
+         
+         {/* Image Gallery Button */}
+         <button 
+           className="gallery-button" 
+           title="Show Image Gallery in Sky"
+           onClick={() => {
+             setShowImageGallery(!showImageGallery)
+           }}
+         >
+           <span className="gallery-icon">🖼️</span>
          </button>
        </div>
        
