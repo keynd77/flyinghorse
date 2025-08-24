@@ -493,7 +493,7 @@ function App() {
              setShowImageGallery(!showImageGallery)
            }}
          >
-           <span className="gallery-icon">🖼️</span>
+           <img src="/image-icon.png" alt="Image Gallery" className="gallery-icon" />
          </button>
        </div>
        
