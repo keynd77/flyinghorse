@@ -27,7 +27,11 @@ function App() {
   const [platformOrder, setPlatformOrder] = useState<('clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question')[]>([])
   const [showImageGallery, setShowImageGallery] = useState(false)
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
-  const [showAlert, setShowAlert] = useState(true)
+  const [showAlert, setShowAlert] = useState(() => {
+    // Check localStorage on component mount
+    const alertShown = localStorage.getItem('alertShown')
+    return alertShown !== 'true'
+  })
   const audioRef = useRef<HTMLAudioElement>(null)
   const controlsRef = useRef<OrbitControlsImpl>(null)
 
@@ -420,10 +424,10 @@ function App() {
         <div className="alert-message" >
           <button 
             className="alert-close-btn"
-            onClick={() => {
-              setShowAlert(false)
-              sessionStorage.setItem('alertDismissed', 'true')
-            }}
+                           onClick={() => {
+                 setShowAlert(false)
+                 localStorage.setItem('alertShown', 'true')
+               }}
             title="Close message"
           >
             ×
