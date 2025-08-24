@@ -429,7 +429,7 @@ function App() {
             ×
           </button>
           <div className="alert-content">
-            unfortunately our X account is suspended. we are working on getting it back. the x community is still up <a href="https://x.com/i/communities/1959007545399681337" target="_blank" rel="noopener noreferrer">here</a>
+             join our community <a href="https://x.com/i/communities/1959007545399681337" target="_blank" rel="noopener noreferrer">here</a>
           </div>
         </div>
       )}
@@ -484,7 +484,7 @@ function App() {
         
                  {/* X Community Button */}
          <a 
-           href="https://x.com/i/communities/1959007545399681337" 
+           href="https://x.com/juanonheaven1" 
            target="_blank" 
            rel="noopener noreferrer"
            className="twitter-button"
