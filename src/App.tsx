@@ -22,9 +22,9 @@ function App() {
   const [screenshot, setScreenshot] = useState<string | null>(null)
   const [showScreenshotPopup, setShowScreenshotPopup] = useState(false)
   const [showCopyToast, setShowCopyToast] = useState(false)
-  const [selectedPlatform, setSelectedPlatform] = useState<'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question_mark_block_super_mario_bros'>('clouds')
+  const [selectedPlatform, setSelectedPlatform] = useState<'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question'>('clouds')
   const [isLoading, setIsLoading] = useState(true)
-  const [platformOrder, setPlatformOrder] = useState<('clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question_mark_block_super_mario_bros')[]>([])
+  const [platformOrder, setPlatformOrder] = useState<('clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question')[]>([])
   const [showImageGallery, setShowImageGallery] = useState(false)
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [showAlert, setShowAlert] = useState(true)
@@ -33,8 +33,8 @@ function App() {
 
   // Create random platform order on initial load
   useEffect(() => {
-    const allPlatforms: ('clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question_mark_block_super_mario_bros')[] = [
-      'clouds', 'satellite', 'ufo', 'finger', 'dollar', 'piece_mark', 'pizza', 'redbull_can', 'skull', 'question_mark_block_super_mario_bros'
+    const allPlatforms: ('clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question')[] = [
+      'clouds', 'satellite', 'ufo', 'finger', 'dollar', 'piece_mark', 'pizza', 'redbull_can', 'skull', 'question'
     ]
     
     // Fisher-Yates shuffle algorithm
@@ -52,8 +52,8 @@ function App() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
     const platformParam = urlParams.get('platform')
-    if (platformParam && ['clouds', 'satellite', 'ufo', 'finger', 'dollar', 'piece_mark', 'pizza', 'redbull_can', 'skull', 'question_mark_block_super_mario_bros'].includes(platformParam)) {
-      setSelectedPlatform(platformParam as 'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question_mark_block_super_mario_bros')
+    if (platformParam && ['clouds', 'satellite', 'ufo', 'finger', 'dollar', 'piece_mark', 'pizza', 'redbull_can', 'skull', 'question'].includes(platformParam)) {
+      setSelectedPlatform(platformParam as 'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question')
     }
   }, [])
 
