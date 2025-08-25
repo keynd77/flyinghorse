@@ -4,7 +4,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
 interface HorseProps {
-  platform?: 'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question'
+  platform?: 'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question' | 'balloon'
 }
 
 const objectConfigs = {
@@ -57,6 +57,11 @@ const objectConfigs = {
     position: { x: 0, y: -4.5, z: 0 },
     rotation: { x: 0, y: 0, z: 0 },
     scale: { x: 0.005, y: 0.005, z: 0.005 }
+  },
+  balloon: {
+    position: { x: -5.65, y: -8, z: 0 },
+    rotation: { x: 0, y: 0, z: 0 },
+    scale: { x: 36 , y: 36, z: 36 }
   }
 }
 
@@ -75,6 +80,7 @@ const Horse = ({ platform = 'clouds' }: HorseProps) => {
   const { scene: redbullCanModel } = useGLTF('/models/redbull_can.glb')
   const { scene: skullModel } = useGLTF('/models/skull.glb')
   const { scene: questionMarkBlockModel } = useGLTF('/models/question.glb')
+  const { scene: balloonModel } = useGLTF('/models/balloon.glb')
   
   // Apply chrome effect to skull model
   useEffect(() => {
@@ -442,6 +448,15 @@ const Horse = ({ platform = 'clouds' }: HorseProps) => {
             position={[objectConfigs.question.position.x, objectConfigs.question.position.y, objectConfigs.question.position.z]} 
             scale={[objectConfigs.question.scale.x, objectConfigs.question.scale.y, objectConfigs.question.scale.z]}
             rotation={[objectConfigs.question.rotation.x, objectConfigs.question.rotation.y, objectConfigs.question.rotation.z]}
+            receiveShadow
+            castShadow
+          />
+        ) : platform === 'balloon' ? (
+          <primitive 
+            object={balloonModel} 
+            position={[objectConfigs.balloon.position.x, objectConfigs.balloon.position.y, objectConfigs.balloon.position.z]} 
+            scale={[objectConfigs.balloon.scale.x, objectConfigs.balloon.scale.y, objectConfigs.balloon.scale.z]}
+            rotation={[objectConfigs.balloon.rotation.x, objectConfigs.balloon.rotation.y, objectConfigs.balloon.rotation.z]}
             receiveShadow
             castShadow
           />
