@@ -4,7 +4,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
 interface HorseProps {
-  platform?: 'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question' | 'balloon'
+  platform?: 'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question' | 'balloon' | 'star_seed'
 }
 
 const objectConfigs = {
@@ -62,6 +62,11 @@ const objectConfigs = {
     position: { x: -5.65, y: -8, z: 0 },
     rotation: { x: 0, y: 0, z: 0 },
     scale: { x: 36 , y: 36, z: 36 }
+  },
+  star_seed: {
+    position: { x: 0, y: -1.9, z: -0.25 },
+    rotation: { x: 0, y: 0, z: 0 },
+    scale: { x: 2, y: 2, z: 2 }
   }
 }
 
@@ -81,6 +86,7 @@ const Horse = ({ platform = 'clouds' }: HorseProps) => {
   const { scene: skullModel } = useGLTF('/models/skull.glb')
   const { scene: questionMarkBlockModel } = useGLTF('/models/question.glb')
   const { scene: balloonModel } = useGLTF('/models/balloon.glb')
+  const { scene: starSeedModel } = useGLTF('/models/star_seed.glb')
   
   // Apply chrome effect to skull model
   useEffect(() => {
@@ -457,6 +463,15 @@ const Horse = ({ platform = 'clouds' }: HorseProps) => {
             position={[objectConfigs.balloon.position.x, objectConfigs.balloon.position.y, objectConfigs.balloon.position.z]} 
             scale={[objectConfigs.balloon.scale.x, objectConfigs.balloon.scale.y, objectConfigs.balloon.scale.z]}
             rotation={[objectConfigs.balloon.rotation.x, objectConfigs.balloon.rotation.y, objectConfigs.balloon.rotation.z]}
+            receiveShadow
+            castShadow
+          />
+        ) : platform === 'star_seed' ? (
+          <primitive 
+            object={starSeedModel} 
+            position={[objectConfigs.star_seed.position.x, objectConfigs.star_seed.position.y, objectConfigs.star_seed.position.z]} 
+            scale={[objectConfigs.star_seed.scale.x, objectConfigs.star_seed.scale.y, objectConfigs.star_seed.scale.z]}
+            rotation={[objectConfigs.star_seed.rotation.x, objectConfigs.star_seed.rotation.y, objectConfigs.star_seed.rotation.z]}
             receiveShadow
             castShadow
           />
