@@ -4,7 +4,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
 interface HorseProps {
-  platform?: 'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question' | 'balloon' | 'star_seed'
+  platform?: 'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question' | 'balloon' | 'star_seed' | 'silver_surfer'
 }
 
 const objectConfigs = {
@@ -67,6 +67,11 @@ const objectConfigs = {
     position: { x: 0, y: -1.9, z: -0.25 },
     rotation: { x: 0, y: 0, z: 0 },
     scale: { x: 2, y: 2, z: 2 }
+  },
+  silver_surfer: {
+    position: { x: 0, y: -0.1, z: -5 },
+    rotation: { x: 0, y: 0, z: 0 },
+    scale: { x: 4, y: 4, z: 4 }
   }
 }
 
@@ -87,6 +92,7 @@ const Horse = ({ platform = 'clouds' }: HorseProps) => {
   const { scene: questionMarkBlockModel } = useGLTF('/models/question.glb')
   const { scene: balloonModel } = useGLTF('/models/balloon.glb')
   const { scene: starSeedModel } = useGLTF('/models/star_seed.glb')
+  const { scene: silverSurferModel } = useGLTF('/models/silver_surfer.glb')
   
   // Apply chrome effect to skull model
   useEffect(() => {
@@ -110,37 +116,17 @@ const Horse = ({ platform = 'clouds' }: HorseProps) => {
   
   // Debug piece mark model loading
   useEffect(() => {
-    console.log('pieceMarkModel loaded:', pieceMarkModel)
-    if (pieceMarkModel) {
-      console.log('pieceMarkModel children count:', pieceMarkModel.children.length)
-      pieceMarkModel.traverse((child) => {
-        console.log('pieceMarkModel child:', child.name, child.type)
-      })
-    }
+    // Debug logging removed
   }, [pieceMarkModel])
 
   // Debug pizza model loading
   useEffect(() => {
-    console.log('pizzaModel loaded:', pizzaModel)
-    if (pizzaModel) {
-      console.log('pizzaModel children count:', pizzaModel.children.length)
-      pizzaModel.traverse((child) => {
-        console.log('pizzaModel child:', child.name, child.type)
-      })
-    } else {
-      console.log('pizzaModel is null or undefined')
-    }
+    // Debug logging removed
   }, [pizzaModel])
 
   // Debug redbull can model loading
   useEffect(() => {
-    console.log('redbullCanModel loaded:', redbullCanModel)
-    if (redbullCanModel) {
-      console.log('redbullCanModel children count:', redbullCanModel.children.length)
-      redbullCanModel.traverse((child) => {
-        console.log('redbullCanModel child:', child.name, child.type)
-      })
-    }
+    // Debug logging removed
   }, [redbullCanModel])
 
   // Apply custom chrome metallic effect to finger model
@@ -472,6 +458,15 @@ const Horse = ({ platform = 'clouds' }: HorseProps) => {
             position={[objectConfigs.star_seed.position.x, objectConfigs.star_seed.position.y, objectConfigs.star_seed.position.z]} 
             scale={[objectConfigs.star_seed.scale.x, objectConfigs.star_seed.scale.y, objectConfigs.star_seed.scale.z]}
             rotation={[objectConfigs.star_seed.rotation.x, objectConfigs.star_seed.rotation.y, objectConfigs.star_seed.rotation.z]}
+            receiveShadow
+            castShadow
+          />
+        ) : platform === 'silver_surfer' ? (
+          <primitive 
+            object={silverSurferModel} 
+            position={[objectConfigs.silver_surfer.position.x, objectConfigs.silver_surfer.position.y, objectConfigs.silver_surfer.position.z]} 
+            scale={[objectConfigs.silver_surfer.scale.x, objectConfigs.silver_surfer.scale.y, objectConfigs.silver_surfer.scale.z]}
+            rotation={[objectConfigs.silver_surfer.rotation.x, objectConfigs.silver_surfer.rotation.y, objectConfigs.silver_surfer.rotation.z]}
             receiveShadow
             castShadow
           />

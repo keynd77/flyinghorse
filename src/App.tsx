@@ -22,9 +22,9 @@ function App() {
   const [screenshot, setScreenshot] = useState<string | null>(null)
   const [showScreenshotPopup, setShowScreenshotPopup] = useState(false)
   const [showCopyToast, setShowCopyToast] = useState(false)
-  const [selectedPlatform, setSelectedPlatform] = useState<'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question' | 'balloon' | 'star_seed'>('clouds')
+  const [selectedPlatform, setSelectedPlatform] = useState<'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question' | 'balloon' | 'star_seed' | 'silver_surfer'>('clouds')
   const [isLoading, setIsLoading] = useState(true)
-  const [platformOrder, setPlatformOrder] = useState<('clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question' | 'balloon' | 'star_seed')[]>([])
+  const [platformOrder, setPlatformOrder] = useState<('clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question' | 'balloon' | 'star_seed' | 'silver_surfer')[]>([])
   const [showImageGallery, setShowImageGallery] = useState(false)
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [showAlert, setShowAlert] = useState(() => {
@@ -37,8 +37,8 @@ function App() {
 
   // Create random platform order on initial load
   useEffect(() => {
-    const allPlatforms: ('clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question' | 'balloon' | 'star_seed')[] = [
-      'clouds', 'satellite', 'ufo', 'finger', 'dollar', 'piece_mark', 'pizza', 'redbull_can', 'skull', 'question', 'balloon', 'star_seed'
+    const allPlatforms: ('clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question' | 'balloon' | 'star_seed' | 'silver_surfer')[] = [
+      'clouds', 'satellite', 'ufo', 'finger', 'dollar', 'piece_mark', 'pizza', 'redbull_can', 'skull', 'question', 'balloon', 'star_seed', 'silver_surfer'
     ]
     
     // Fisher-Yates shuffle algorithm
@@ -49,15 +49,14 @@ function App() {
     }
     
     setPlatformOrder(shuffled)
-    console.log('Random platform order:', shuffled)
   }, [])
 
   // Read platform from URL on page load
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
     const platformParam = urlParams.get('platform')
-    if (platformParam && ['clouds', 'satellite', 'ufo', 'finger', 'dollar', 'piece_mark', 'pizza', 'redbull_can', 'skull', 'question', 'balloon', 'star_seed'].includes(platformParam)) {
-      setSelectedPlatform(platformParam as 'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question' | 'balloon' | 'star_seed')
+    if (platformParam && ['clouds', 'satellite', 'ufo', 'finger', 'dollar', 'piece_mark', 'pizza', 'redbull_can', 'skull', 'question', 'balloon', 'star_seed', 'silver_surfer'].includes(platformParam)) {
+      setSelectedPlatform(platformParam as 'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question' | 'balloon' | 'star_seed' | 'silver_surfer')
     }
   }, [])
 
@@ -193,10 +192,8 @@ function App() {
   }, [])
 
   const handleScreenshot = (image: string) => {
-    console.log('Screenshot captured:', image.substring(0, 50) + '...')
     setScreenshot(image)
     setShowScreenshotPopup(true)
-    console.log('Popup should be visible now')
     return null
   }
 
@@ -221,7 +218,6 @@ function App() {
           new (window as any).ClipboardItem({ [blob.type]: blob })
         ])
         
-        console.log('Screenshot copied to clipboard!')
         // Show success toast
         setShowCopyToast(true)
         setTimeout(() => setShowCopyToast(false), 3000) // Hide after 3 seconds
@@ -239,8 +235,6 @@ function App() {
   }
 
   const takeScreenshot = () => {
-    console.log('Taking screenshot of entire scene')
-    
     try {
       // Get the Three.js canvas directly
       const canvas = document.querySelector('canvas')
@@ -270,7 +264,6 @@ function App() {
           
           // Convert to data URL
           const dataURL = tempCanvas.toDataURL('image/png')
-          console.log('Screenshot with watermark created, calling handleScreenshot')
           handleScreenshot(dataURL)
         } else {
           console.error('Failed to get 2D context for temp canvas')
@@ -482,7 +475,7 @@ function App() {
           title={`Switch to next platform in random order`}
         >
           <span className="platform-icon">
-            {selectedPlatform === 'clouds' ? '☁️' : selectedPlatform === 'satellite' ? '🛰️' : selectedPlatform === 'ufo' ? '🛸' : selectedPlatform === 'finger' ? '👆' : selectedPlatform === 'dollar' ? '💰' : selectedPlatform === 'piece_mark' ? '🎯' : selectedPlatform === 'pizza' ? '🍕' : selectedPlatform === 'redbull_can' ? '🥤' : selectedPlatform === 'skull' ? '💀' : selectedPlatform === 'question' ? '❓' : selectedPlatform === 'balloon' ? '🎈' : '⭐'}
+            {selectedPlatform === 'clouds' ? '☁️' : selectedPlatform === 'satellite' ? '🛰️' : selectedPlatform === 'ufo' ? '🛸' : selectedPlatform === 'finger' ? '👆' : selectedPlatform === 'dollar' ? '💰' : selectedPlatform === 'piece_mark' ? '🎯' : selectedPlatform === 'pizza' ? '🍕' : selectedPlatform === 'redbull_can' ? '🥤' : selectedPlatform === 'skull' ? '💀' : selectedPlatform === 'question' ? '❓' : selectedPlatform === 'balloon' ? '🎈' : selectedPlatform === 'star_seed' ? '⭐' : '🏄'}
           </span>
         </button>
         

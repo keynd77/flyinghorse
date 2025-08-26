@@ -13,7 +13,7 @@ interface ImageGalleryProps {
 }
 
 const ImageGallery = ({ onImageSelect }: ImageGalleryProps) => {
-  console.log('ImageGallery: Component rendering')
+
   const groupRef = useRef<THREE.Group>(null)
   const [textures, setTextures] = useState<{texture: THREE.Texture, url: string}[]>([])
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
@@ -30,25 +30,21 @@ const ImageGallery = ({ onImageSelect }: ImageGalleryProps) => {
 
   // Load textures
   useEffect(() => {
-    console.log(`ImageGallery: Starting to load ${sampleImages.length} textures...`)
+
     const textureLoader = new THREE.TextureLoader()
     const loadedTextures: {texture: THREE.Texture, url: string}[] = []
     
     // Add timeout to prevent hanging
     const timeout = setTimeout(() => {
-      console.log(`ImageGallery: Texture loading timeout - showing fallback colors. Loaded: ${loadedTextures.length}/${sampleImages.length}`)
       setTextures(loadedTextures) // Show what we have so far
     }, 10000) // 10 second timeout for more images
     
     sampleImages.forEach((url, index) => {
-      console.log(`ImageGallery: Loading image ${index + 1}/${sampleImages.length}: ${url}`)
       textureLoader.load(
         url, 
         (texture) => {
-          console.log(`ImageGallery: Successfully loaded texture ${index + 1}/${sampleImages.length}`)
           loadedTextures.push({texture, url})
           if (loadedTextures.length === sampleImages.length) {
-            console.log(`ImageGallery: All ${loadedTextures.length} textures loaded!`)
             clearTimeout(timeout)
             setTextures(loadedTextures)
           }
@@ -59,7 +55,6 @@ const ImageGallery = ({ onImageSelect }: ImageGalleryProps) => {
           // If any image fails, show fallback after a short delay
           setTimeout(() => {
             if (textures.length === 0) {
-              console.log(`ImageGallery: Some images failed - showing fallback colors. Loaded: ${loadedTextures.length}/${sampleImages.length}`)
               setTextures(loadedTextures) // Show what we have so far
             }
           }, 1000)
