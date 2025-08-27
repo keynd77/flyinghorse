@@ -297,7 +297,7 @@ function App() {
         <Suspense fallback={null}>
   {/* Sky and lighting */}
   <Sky sunPosition={[100, 20, 100]} />
-            <Environment preset="sunset" />
+            <Environment files="/textures/sky.hdr"/>
 
   {/* ✅ add lights */}
   <ambientLight intensity={0.3} />
