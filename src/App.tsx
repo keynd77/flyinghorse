@@ -22,9 +22,9 @@ function App() {
   const [screenshot, setScreenshot] = useState<string | null>(null)
   const [showScreenshotPopup, setShowScreenshotPopup] = useState(false)
   const [showCopyToast, setShowCopyToast] = useState(false)
-  const [selectedPlatform, setSelectedPlatform] = useState<'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question' | 'balloon' | 'star_seed' | 'silver_surfer'>('clouds')
+  const [selectedPlatform, setSelectedPlatform] = useState<'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question' | 'balloon' | 'star_seed' | 'silver_surfer' | 'green_pillar'>('clouds')
   const [isLoading, setIsLoading] = useState(true)
-  const [platformOrder, setPlatformOrder] = useState<('clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question' | 'balloon' | 'star_seed' | 'silver_surfer')[]>([])
+  const [platformOrder, setPlatformOrder] = useState<('clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question' | 'balloon' | 'star_seed' | 'silver_surfer' | 'green_pillar')[]>([])
   const [showImageGallery, setShowImageGallery] = useState(false)
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [showAlert, setShowAlert] = useState(() => {
@@ -37,8 +37,8 @@ function App() {
 
   // Create random platform order on initial load
   useEffect(() => {
-    const allPlatforms: ('clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question' | 'balloon' | 'star_seed' | 'silver_surfer')[] = [
-      'clouds', 'satellite', 'ufo', 'finger', 'dollar', 'piece_mark', 'pizza', 'redbull_can', 'skull', 'question', 'balloon', 'star_seed', 'silver_surfer'
+    const allPlatforms: ('clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question' | 'balloon' | 'star_seed' | 'silver_surfer' | 'green_pillar')[] = [
+      'clouds', 'satellite', 'ufo', 'finger', 'dollar', 'piece_mark', 'pizza', 'redbull_can', 'skull', 'question', 'balloon', 'star_seed', 'silver_surfer', 'green_pillar'
     ]
     
     // Fisher-Yates shuffle algorithm
@@ -55,8 +55,8 @@ function App() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
     const platformParam = urlParams.get('platform')
-    if (platformParam && ['clouds', 'satellite', 'ufo', 'finger', 'dollar', 'piece_mark', 'pizza', 'redbull_can', 'skull', 'question', 'balloon', 'star_seed', 'silver_surfer'].includes(platformParam)) {
-      setSelectedPlatform(platformParam as 'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question' | 'balloon' | 'star_seed' | 'silver_surfer')
+    if (platformParam && ['clouds', 'satellite', 'ufo', 'finger', 'dollar', 'piece_mark', 'pizza', 'redbull_can', 'skull', 'question', 'balloon', 'star_seed', 'silver_surfer', 'green_pillar'].includes(platformParam)) {
+      setSelectedPlatform(platformParam as 'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question' | 'balloon' | 'star_seed' | 'silver_surfer' | 'green_pillar')
     }
   }, [])
 
@@ -475,7 +475,7 @@ function App() {
           title={`Switch to next platform in random order`}
         >
           <span className="platform-icon">
-            {selectedPlatform === 'clouds' ? '☁️' : selectedPlatform === 'satellite' ? '🛰️' : selectedPlatform === 'ufo' ? '🛸' : selectedPlatform === 'finger' ? '👆' : selectedPlatform === 'dollar' ? '💰' : selectedPlatform === 'piece_mark' ? '🎯' : selectedPlatform === 'pizza' ? '🍕' : selectedPlatform === 'redbull_can' ? '🥤' : selectedPlatform === 'skull' ? '💀' : selectedPlatform === 'question' ? '❓' : selectedPlatform === 'balloon' ? '🎈' : selectedPlatform === 'star_seed' ? '⭐' : '🏄'}
+            {selectedPlatform === 'clouds' ? '☁️' : selectedPlatform === 'satellite' ? '🛰️' : selectedPlatform === 'ufo' ? '🛸' : selectedPlatform === 'finger' ? '👆' : selectedPlatform === 'dollar' ? '💰' : selectedPlatform === 'piece_mark' ? '🎯' : selectedPlatform === 'pizza' ? '🍕' : selectedPlatform === 'redbull_can' ? '🥤' : selectedPlatform === 'skull' ? '💀' : selectedPlatform === 'question' ? '❓' : selectedPlatform === 'balloon' ? '🎈' : selectedPlatform === 'star_seed' ? '⭐' : selectedPlatform === 'silver_surfer' ? '🏄' : '🟢'}
           </span>
         </button>
         

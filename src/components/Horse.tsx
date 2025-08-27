@@ -4,7 +4,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
 interface HorseProps {
-  platform?: 'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question' | 'balloon' | 'star_seed' | 'silver_surfer'
+  platform?: 'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question' | 'balloon' | 'star_seed' | 'silver_surfer' | 'green_pillar'
 }
 
 const objectConfigs = {
@@ -72,6 +72,11 @@ const objectConfigs = {
     position: { x: 0, y: -0.1, z: -5 },
     rotation: { x: 0, y: 0, z: 0 },
     scale: { x: 4, y: 4, z: 4 }
+  },
+  green_pillar: {
+    position: { x: 0, y: -100, z: 0 },
+    rotation: { x: 0, y: 0, z: 0 },
+    scale: { x: 1, y: 10, z: 1 }
   }
 }
 
@@ -470,6 +475,17 @@ const Horse = ({ platform = 'clouds' }: HorseProps) => {
             receiveShadow
             castShadow
           />
+        ) : platform === 'green_pillar' ? (
+          <mesh
+            position={[objectConfigs.green_pillar.position.x, objectConfigs.green_pillar.position.y, objectConfigs.green_pillar.position.z]}
+            scale={[objectConfigs.green_pillar.scale.x, objectConfigs.green_pillar.scale.y, objectConfigs.green_pillar.scale.z]}
+            rotation={[objectConfigs.green_pillar.rotation.x, objectConfigs.green_pillar.rotation.y, objectConfigs.green_pillar.rotation.z]}
+            receiveShadow
+            castShadow
+          >
+            <boxGeometry args={[2, 20, 2]} />
+            <meshStandardMaterial color="#00ff00" />
+          </mesh>
         ) : platform === 'redbull_can' ? (
           <primitive 
             object={redbullCanModel} 
