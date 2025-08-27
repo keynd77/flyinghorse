@@ -4,7 +4,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
 interface HorseProps {
-  platform?: 'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question' | 'balloon' | 'star_seed' | 'silver_surfer' | 'green_pillar'
+  platform?: 'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question' | 'balloon' | 'star_seed' | 'silver_surfer' | 'green_candle'
 }
 
 const objectConfigs = {
@@ -73,7 +73,7 @@ const objectConfigs = {
     rotation: { x: 0, y: 0, z: 0 },
     scale: { x: 4, y: 4, z: 4 }
   },
-  green_pillar: {
+  green_candle: {
     position: { x: 0, y: -100, z: 0 },
     rotation: { x: 0, y: 0, z: 0 },
     scale: { x: 1, y: 10, z: 1 }
@@ -475,11 +475,11 @@ const Horse = ({ platform = 'clouds' }: HorseProps) => {
             receiveShadow
             castShadow
           />
-        ) : platform === 'green_pillar' ? (
+        ) : platform === 'green_candle' ? (
           <mesh
-            position={[objectConfigs.green_pillar.position.x, objectConfigs.green_pillar.position.y, objectConfigs.green_pillar.position.z]}
-            scale={[objectConfigs.green_pillar.scale.x, objectConfigs.green_pillar.scale.y, objectConfigs.green_pillar.scale.z]}
-            rotation={[objectConfigs.green_pillar.rotation.x, objectConfigs.green_pillar.rotation.y, objectConfigs.green_pillar.rotation.z]}
+            position={[objectConfigs.green_candle.position.x, objectConfigs.green_candle.position.y, objectConfigs.green_candle.position.z]}
+            scale={[objectConfigs.green_candle.scale.x, objectConfigs.green_candle.scale.y, objectConfigs.green_candle.scale.z]}
+            rotation={[objectConfigs.green_candle.rotation.x, objectConfigs.green_candle.rotation.y, objectConfigs.green_candle.rotation.z]}
             receiveShadow
             castShadow
           >
