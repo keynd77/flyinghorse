@@ -32,6 +32,7 @@ function App() {
     const alertShown = localStorage.getItem('alertShown')
     return alertShown !== 'true'
   })
+  const [isFullscreen, setIsFullscreen] = useState(false)
   const audioRef = useRef<HTMLAudioElement>(null)
   const controlsRef = useRef<OrbitControlsImpl>(null)
 
@@ -413,7 +414,7 @@ function App() {
       )}
       
       {/* Alert Message - Top Center */}
-      {showAlert && (
+      {showAlert && !isFullscreen && (
         <div className="alert-message" >
           <button 
             className="alert-close-btn"
@@ -435,7 +436,8 @@ function App() {
       <audio ref={audioRef} src="/juan-track.mp3" loop />
       
       {/* Music Button - Top Left */}
-      <div className="music-button-container">
+      {!isFullscreen && (
+        <div className="music-button-container">
         <button 
           className={`play_music ${isPlaying && !isPaused && !isMuted ? 'playing' : ''} ${isMuted ? 'muted' : ''}`}
           onClick={isMuted ? toggleMute : toggleMusic}
@@ -524,17 +526,51 @@ function App() {
            <img src="/editor-icon.png" alt="Meme Maker" className="meme-maker-icon" />
          </a>
        </div>
+       )}
+       
+       {/* Fullscreen Button - Bottom Right */}
+       <button 
+         className="fullscreen-button"
+         onClick={() => setIsFullscreen(!isFullscreen)}
+         title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+         style={{
+           position: 'fixed',
+           bottom: '20px',
+           right: '20px',
+           zIndex: 1000,
+           background: 'rgba(255, 255, 255, 0.1)',
+           border: '2px solid rgba(255, 255, 255, 0.3)',
+           borderRadius: '50%',
+           width: '50px',
+           height: '50px',
+           display: 'flex',
+           alignItems: 'center',
+           justifyContent: 'center',
+           cursor: 'pointer',
+           fontSize: '20px',
+           color: 'white',
+           backdropFilter: 'blur(10px)',
+           transition: 'all 0.3s ease',
+           paddingTop: '2px',
+           paddingLeft: '1px'
+         }}
+       >
+         {isFullscreen ? '⛶' : '⛶'}
+       </button>
        
        {/* UI Overlay */}
-       <div className="ui-overlay">
-         <h1>juan.</h1>
-         
-         {/* Music Button */}
-        
-       </div>
+       {!isFullscreen && (
+         <div className="ui-overlay">
+           <h1>juan.</h1>
+           
+           {/* Music Button */}
+          
+         </div>
+       )}
        
        {/* Bottom Text */}
-       <div className="bottom-text">
+       {!isFullscreen && (
+         <div className="bottom-text">
          <img 
            src="/arrow-keys.png" 
            alt="Arrow Keys Movement" 
@@ -546,6 +582,7 @@ function App() {
            This is for entertainment purposes only. Never invest more than you can afford to lose.
          </p>
        </div>
+       )}
        
 
        
