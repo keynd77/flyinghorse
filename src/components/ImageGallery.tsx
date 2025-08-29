@@ -1,27 +1,47 @@
 import { useRef, useEffect, useState } from 'react'
 import { Float, MeshWobbleMaterial } from '@react-three/drei'
 import * as THREE from 'three'
-import { imageCollection, galleryConfig } from '../config/imageConfig'
 
-// Convert object values to array for the component
-const sampleImages = Object.values(imageCollection)
-
-
+interface GalleryConfig {
+  imageCollection: { [key: string]: string }
+  galleryConfig: {
+    columns: number
+    spacing: { x: number; y: number; z: number }
+    imageSize: { width: number; height: number }
+    wobble: { baseFactor: number; hoverFactor: number; baseSpeed: number; hoverSpeed: number }
+  }
+}
 
 interface ImageGalleryProps {
   onImageSelect: (imageUrl: string) => void
 }
 
 const ImageGallery = ({ onImageSelect }: ImageGalleryProps) => {
-
+  const [config, setConfig] = useState<GalleryConfig | null>(null)
+  const [sampleImages, setSampleImages] = useState<string[]>([])
+  const [galleryConfig, setGalleryConfig] = useState<any>(null)
   const groupRef = useRef<THREE.Group>(null)
   const [textures, setTextures] = useState<{texture: THREE.Texture, url: string}[]>([])
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
   const [cameraOffset, setCameraOffset] = useState({ x: 0, y: 0, z: 0 })
   
+  // Load configuration from JSON file
+  useEffect(() => {
+    fetch('/gallery-config.json')
+      .then(response => response.json())
+      .then((data: GalleryConfig) => {
+        setConfig(data)
+        setSampleImages(Object.values(data.imageCollection))
+        setGalleryConfig(data.galleryConfig)
+      })
+      .catch(error => {
+        console.error('Failed to load gallery config:', error)
+      })
+  }, [])
+  
   // Store random offsets once when component mounts
   const [randomOffsets] = useState(() => {
-    return sampleImages.map(() => ({
+    return Array(97).fill(null).map(() => ({
       x: (Math.random() - 0.5) * 2, // ±1 unit random X offset
       y: (Math.random() - 0.5) * 2, // ±1 unit random Y offset
       z: (Math.random() - 0.5) * 1  // ±0.5 unit random Z offset
@@ -30,6 +50,7 @@ const ImageGallery = ({ onImageSelect }: ImageGalleryProps) => {
 
   // Load textures
   useEffect(() => {
+    if (!sampleImages.length) return
 
     const textureLoader = new THREE.TextureLoader()
     const loadedTextures: {texture: THREE.Texture, url: string}[] = []
@@ -63,7 +84,7 @@ const ImageGallery = ({ onImageSelect }: ImageGalleryProps) => {
     })
     
     return () => clearTimeout(timeout)
-  }, [])
+  }, [sampleImages])
 
   // Continuous movement based on mouse position
   useEffect(() => {
@@ -93,50 +114,50 @@ const ImageGallery = ({ onImageSelect }: ImageGalleryProps) => {
       
       // Only move if mouse is inside the window
       if (isMouseInWindow) {
-                // Calculate direction vector from center to mouse
+        // Calculate direction vector from center to mouse
         const deltaX = lastMouseX - centerX
         const deltaY = lastMouseY - centerY
         
-                // Only move if mouse is outside center safe zone (50% height, 50% width)
+        // Only move if mouse is outside center safe zone (50% height, 50% width)
         const safeZoneWidth = window.innerWidth * 0.5  // 50% of window width
         const safeZoneHeight = window.innerHeight * 0.5 // 50% of window height
       
-      if (Math.abs(deltaX) > safeZoneWidth / 2 || Math.abs(deltaY) > safeZoneHeight / 2) {
-                  // Calculate speed based on distance from safe zone edge (farther = faster, but very subtle)
-        const distanceFromSafeZoneX = Math.abs(deltaX) - safeZoneWidth / 2
-        const distanceFromSafeZoneY = Math.abs(deltaY) - safeZoneHeight / 2
-        const distanceFromSafeZone = Math.max(distanceFromSafeZoneX, distanceFromSafeZoneY)
-        
-        // Extremely slow, barely noticeable movement that increases very gradually with distance
-        const speed = Math.min(0.0001, distanceFromSafeZone / 2000000) // Barely moving, minimal increase
-        
-        // Move gallery in EXACT OPPOSITE direction of mouse position from center
-        // If mouse is on the right side, move gallery left. If mouse is on left side, move gallery right.
-        // If mouse is on top side, move gallery down. If mouse is on bottom side, move gallery up.
-        setCameraOffset(prev => {
-          const newX = prev.x - (deltaX * speed) // Negative deltaX = opposite direction
-          const newY = prev.y + (deltaY * speed) // Positive deltaY = opposite direction (Y is inverted in 3D)
+        if (Math.abs(deltaX) > safeZoneWidth / 2 || Math.abs(deltaY) > safeZoneHeight / 2) {
+          // Calculate speed based on distance from safe zone edge (farther = faster, but very subtle)
+          const distanceFromSafeZoneX = Math.abs(deltaX) - safeZoneWidth / 2
+          const distanceFromSafeZoneY = Math.abs(deltaY) - safeZoneHeight / 2
+          const distanceFromSafeZone = Math.max(distanceFromSafeZoneX, distanceFromSafeZoneY)
           
-          // Calculate gallery bounds based on image grid
-          const totalImages = sampleImages.length
-          const columns = 9
-          const rows = Math.ceil(totalImages / columns)
+          // Extremely slow, barely noticeable movement that increases very gradually with distance
+          const speed = Math.min(0.0001, distanceFromSafeZone / 2000000) // Barely moving, minimal increase
           
-          // Calculate actual gallery dimensions
-          const galleryWidth = columns * 5 // 5 units between columns
-          const galleryHeight = rows * 4   // 4 units between rows
-          
-          // Calculate maximum allowed movement to keep all images visible
-          // We want the gallery to stay centered, so movement is limited to half the gallery size
-          const maxOffsetX = Math.max(0, (galleryWidth - 20) / 2) // Keep some margin
-          const maxOffsetY = Math.max(0, (galleryHeight - 15) / 2) // Keep some margin
-          
-          return {
-            x: Math.max(-maxOffsetX, Math.min(maxOffsetX, newX)),
-            y: Math.max(-maxOffsetY, Math.min(maxOffsetY, newY)),
-            z: prev.z
-          }
-        })
+          // Move gallery in EXACT OPPOSITE direction of mouse position from center
+          // If mouse is on the right side, move gallery left. If mouse is on left side, move gallery right.
+          // If mouse is on top side, move gallery down. If mouse is on bottom side, move gallery up.
+          setCameraOffset(prev => {
+            const newX = prev.x - (deltaX * speed) // Negative deltaX = opposite direction
+            const newY = prev.y + (deltaY * speed) // Positive deltaY = opposite direction (Y is inverted in 3D)
+            
+            // Calculate gallery bounds based on image grid
+            const totalImages = sampleImages.length
+            const columns = galleryConfig?.columns || 9
+            const rows = Math.ceil(totalImages / columns)
+            
+            // Calculate actual gallery dimensions
+            const galleryWidth = columns * (galleryConfig?.spacing?.x || 5) // 5 units between columns
+            const galleryHeight = rows * (galleryConfig?.spacing?.y || 4)   // 4 units between rows
+            
+            // Calculate maximum allowed movement to keep all images visible
+            // We want the gallery to stay centered, so movement is limited to half the gallery size
+            const maxOffsetX = Math.max(0, (galleryWidth - 20) / 2) // Keep some margin
+            const maxOffsetY = Math.max(0, (galleryHeight - 15) / 2) // Keep some margin
+            
+            return {
+              x: Math.max(-maxOffsetX, Math.min(maxOffsetX, newX)),
+              y: Math.max(-maxOffsetY, Math.min(maxOffsetY, newY)),
+              z: prev.z
+            }
+          })
         }
       }
       
@@ -154,20 +175,20 @@ const ImageGallery = ({ onImageSelect }: ImageGalleryProps) => {
       document.removeEventListener('mouseenter', handleMouseEnter)
       if (animationId) cancelAnimationFrame(animationId)
     }
-  }, [])
+  }, [sampleImages, galleryConfig])
+
+  if (!config || !galleryConfig) {
+    return null // Don't render until config is loaded
+  }
 
   return (
     <group 
       ref={groupRef}
       position={[cameraOffset.x, cameraOffset.y, cameraOffset.z]}
     >
-
-      
-
-
-                   {/* Image Grid */}
-             {textures.length === 0 ? (
-                       // Show loading placeholders when no textures are loaded
+      {/* Image Grid */}
+      {textures.length === 0 ? (
+        // Show loading placeholders when no textures are loaded
         sampleImages.map((url, index) => {
           const row = Math.floor(index / galleryConfig.columns)
           const col = index % galleryConfig.columns
@@ -186,10 +207,10 @@ const ImageGallery = ({ onImageSelect }: ImageGalleryProps) => {
               floatIntensity={0.5}
               position={[x, y, z]}
             >
-                                   <mesh>
-                       <planeGeometry args={[galleryConfig.imageSize.width, galleryConfig.imageSize.height]} />
-                       <meshBasicMaterial color="#666" />
-                     </mesh>
+              <mesh>
+                <planeGeometry args={[galleryConfig.imageSize.width, galleryConfig.imageSize.height]} />
+                <meshBasicMaterial color="#666" />
+              </mesh>
               
               {/* Loading Spinner */}
               <mesh position={[0, 0, 0.01]} rotation={[0, 0, 0]}>
@@ -208,7 +229,7 @@ const ImageGallery = ({ onImageSelect }: ImageGalleryProps) => {
           )
         })
       ) : (
-                               // Show actual images when textures are loaded
+        // Show actual images when textures are loaded
         textures.map((texture, index) => {
           const row = Math.floor(index / galleryConfig.columns)
           const col = index % galleryConfig.columns
@@ -245,10 +266,8 @@ const ImageGallery = ({ onImageSelect }: ImageGalleryProps) => {
               </mesh>
             </Float>
           )
-                })
+        })
       )}
-
-
     </group>
   )
 }
