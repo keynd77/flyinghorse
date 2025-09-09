@@ -4,7 +4,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
 interface HorseProps {
-  platform?: 'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question' | 'balloon' | 'star_seed' | 'silver_surfer' | 'green_candle'
+  platform?: 'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question' | 'balloon' | 'star_seed' | 'silver_surfer' | 'green_candle' | 'microphone'
 }
 
 const objectConfigs = {
@@ -77,6 +77,11 @@ const objectConfigs = {
     position: { x: 0, y: -100, z: 0 },
     rotation: { x: 0, y: 0, z: 0 },
     scale: { x: 1, y: 10, z: 1 }
+  },
+  microphone: {
+    position: { x: 0, y: -1.45, z: 0 },
+    rotation: { x: 0, y: -0.7, z: -0.1 },
+    scale: { x: 2, y: 2, z: 2 }
   }
 }
 
@@ -98,6 +103,7 @@ const Horse = ({ platform = 'clouds' }: HorseProps) => {
   const { scene: balloonModel } = useGLTF('/models/balloon.glb')
   const { scene: starSeedModel } = useGLTF('/models/star_seed.glb')
   const { scene: silverSurferModel } = useGLTF('/models/silver_surfer.glb')
+  const { scene: microphoneModel } = useGLTF('/models/microphone.glb')
   
   // Apply chrome effect to skull model
   useEffect(() => {
@@ -486,6 +492,15 @@ const Horse = ({ platform = 'clouds' }: HorseProps) => {
             <boxGeometry args={[2, 20, 2]} />
             <meshStandardMaterial color="#00ff00" />
           </mesh>
+        ) : platform === 'microphone' ? (
+          <primitive 
+            object={microphoneModel} 
+            position={[objectConfigs.microphone.position.x, objectConfigs.microphone.position.y, objectConfigs.microphone.position.z]} 
+            scale={[objectConfigs.microphone.scale.x, objectConfigs.microphone.scale.y, objectConfigs.microphone.scale.z]}
+            rotation={[objectConfigs.microphone.rotation.x, objectConfigs.microphone.rotation.y, objectConfigs.microphone.rotation.z]}
+            receiveShadow
+            castShadow
+          />
         ) : platform === 'redbull_can' ? (
           <primitive 
             object={redbullCanModel} 

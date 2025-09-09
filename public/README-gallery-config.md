@@ -127,3 +127,5 @@ print(f"Gallery columns: {gallery_config['columns']}")
 ## 🌍 **CORS**
 This JSON file is served with appropriate CORS headers to allow cross-origin requests from other websites.
 
+
+
