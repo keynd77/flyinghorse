@@ -74,13 +74,18 @@ canvas {
     font-size: 1.2rem;
   }
   
+  .bottom-text {
+    width: 100% !important;
+    max-width: 96vw !important;
+  }
+  
   .bottom-text p {
-    font-size: 1.2rem;
+    font-size: 14px !important;
   }
   
   .bottom-text .disclaimer {
-    font-size: 0.8rem;
-    max-width: 80vw;
+    font-size: 10px !important;
+    max-width: 96vw;
   }
 }
 
@@ -93,13 +98,18 @@ canvas {
     font-size: 1rem;
   }
   
+  .bottom-text {
+    width: 100% !important;
+    max-width: 96vw !important;
+  }
+  
   .bottom-text p {
-    font-size: 1rem;
+    font-size: 14px !important;
   }
   
   .bottom-text .disclaimer {
-    font-size: 0.7rem;
-    max-width: 85vw;
+    font-size: 10px !important;
+    max-width: 96vw;
     margin-top: 0.3rem;
   }
 }
