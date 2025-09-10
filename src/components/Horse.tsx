@@ -4,7 +4,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
 interface HorseProps {
-  platform?: 'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'piece_mark' | 'pizza' | 'redbull_can' | 'skull' | 'question' | 'balloon' | 'star_seed' | 'silver_surfer' | 'green_candle' | 'microphone'
+  platform?: 'clouds' | 'satellite' | 'ufo' | 'finger' | 'dollar' | 'peace' | 'pizza' | 'redbull_can' | 'skull' | 'question' | 'balloon' | 'star_seed' | 'silver_surfer' | 'green_candle' | 'microphone'
 }
 
 const objectConfigs = {
@@ -33,7 +33,7 @@ const objectConfigs = {
     rotation: { x: 0, y: 0, z: 0 },
     scale: { x: 7, y: 7, z: 7 }
   },
-  piece_mark: {
+  peace_sign: {
     position: { x: 0, y: -7.2, z: 2.7 },
     rotation: { x: -1.6, y: -0, z: 0 },
     scale: { x: 100, y: 100, z: 100 }
@@ -95,7 +95,7 @@ const Horse = ({ platform = 'clouds' }: HorseProps) => {
   const { scene: ufoModel } = useGLTF('/models/ufo.glb')
   const { scene: fingerModel } = useGLTF('/models/finger.glb')
   const { scene: dollarSignModel } = useGLTF('/models/dolar_sign.glb')
-  const { scene: pieceMarkModel } = useGLTF('/models/piece_mark.glb')
+  const { scene: peaceSignModel } = useGLTF('/models/peace_sign.glb')
   const { scene: pizzaModel } = useGLTF('/models/pizza.glb')
   const { scene: redbullCanModel } = useGLTF('/models/redbull_can.glb')
   const { scene: skullModel } = useGLTF('/models/skull.glb')
@@ -125,10 +125,10 @@ const Horse = ({ platform = 'clouds' }: HorseProps) => {
     }
   }, [skullModel])
   
-  // Debug piece mark model loading
+  // Debug peace sign model loading
   useEffect(() => {
     // Debug logging removed
-  }, [pieceMarkModel])
+  }, [peaceSignModel])
 
   // Debug pizza model loading
   useEffect(() => {
@@ -198,10 +198,10 @@ const Horse = ({ platform = 'clouds' }: HorseProps) => {
     }
   }, [dollarSignModel])
 
-  // Apply metallic effect to piece mark model
+  // Apply metallic effect to peace sign model
   useEffect(() => {
-    if (pieceMarkModel) {
-      pieceMarkModel.traverse((child) => {
+    if (peaceSignModel) {
+      peaceSignModel.traverse((child) => {
         if (child instanceof THREE.Mesh && child.material) {
           if (Array.isArray(child.material)) {
             child.material.forEach(mat => {
@@ -225,7 +225,7 @@ const Horse = ({ platform = 'clouds' }: HorseProps) => {
         }
       })
     }
-  }, [pieceMarkModel])
+  }, [peaceSignModel])
 
   // Apply material effects to pizza model
   useEffect(() => {
@@ -418,12 +418,12 @@ const Horse = ({ platform = 'clouds' }: HorseProps) => {
             receiveShadow
             castShadow
           />
-        ) : platform === 'piece_mark' ? (
+        ) : platform === 'peace' ? (
           <primitive 
-            object={pieceMarkModel} 
-            position={[objectConfigs.piece_mark.position.x, objectConfigs.piece_mark.position.y, objectConfigs.piece_mark.position.z]} 
-            scale={[objectConfigs.piece_mark.scale.x, objectConfigs.piece_mark.scale.y, objectConfigs.piece_mark.scale.z]}
-            rotation={[objectConfigs.piece_mark.rotation.x, objectConfigs.piece_mark.rotation.y, objectConfigs.piece_mark.rotation.z]}
+            object={peaceSignModel} 
+            position={[objectConfigs.peace_sign.position.x, objectConfigs.peace_sign.position.y, objectConfigs.peace_sign.position.z]} 
+            scale={[objectConfigs.peace_sign.scale.x, objectConfigs.peace_sign.scale.y, objectConfigs.peace_sign.scale.z]}
+            rotation={[objectConfigs.peace_sign.rotation.x, objectConfigs.peace_sign.rotation.y, objectConfigs.peace_sign.rotation.z]}
             receiveShadow
             castShadow
           />
